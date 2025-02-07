@@ -1,13 +1,25 @@
-// server.js
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path');
 require('dotenv').config(); // Load environment variables from .env file
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
-// Middleware
+// Middleware to parse JSON data
 app.use(express.json());
+
+// Serve static files from the frontend/public directory
+app.use(express.static(path.join(__dirname, '../frontend/public')));
+
+app.use('/assets', express.static(path.join(__dirname, '../frontend/assets')));
+
+app.use('/components', express.static(path.join(__dirname, "../frontend/components")));
+
+// Serve index.html at the root route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
+});
 
 // MongoDB connection
 const connectDB = async () => {
@@ -26,9 +38,22 @@ const connectDB = async () => {
 // Call the connectDB function
 connectDB();
 
-// Sample route
-app.get('/', (req, res) => {
-    res.send('Hello World!');
+// Sample API route (for backend API requests)
+app.get('/api/data', (req, res) => {
+    res.json({ message: 'Hello from the backend!' });
+});
+
+// Serve other pages directly (like destinations.html, login.html)
+app.get('/destinations.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/public/destinations.html'));
+});
+
+app.get('/login.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/public/login.html'));
+});
+
+app.get('/register.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/public/register.html'));
 });
 
 // Start the server

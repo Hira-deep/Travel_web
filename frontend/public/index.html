@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="server.js"></script>
+    <title>Travel Website</title>
+</head>
+
+<body>
+    <script>
+        // Example fetch request from frontend
+        fetch('http://localhost:4000/api/data')
+            .then(response => response.json())
+            .then(data => console.log(data)); // { message: 'Hello from the backend!' }
+
+    </script>
+
+    <div id="header-container"></div>
+    
+
+<main>
+    <h1>Welcome to Travel Website! </h1>
+    <!-- Page content goes here -->
+</main>
+
+<!-- Include the JavaScript for the header -->
+<script src="header.js"></script>
+</body>
+
+</html>
