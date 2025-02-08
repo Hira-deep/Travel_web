@@ -3,28 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" src="style.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="login.css">
-
-
-    <title>register</title>
+    <title>Register</title>
 </head>
 <body>
     <div id="header-container"></div>
 
     <section class="login-section">
         <div class="login-container">
-            
             <div class="login-image">
-                <img src="assets/login.png" alt="Login Image" />
+                <img src="assets/register.png" alt="Register Image" />
             </div>
             
             <div class="login-form">
                 <div class="user-icon">
                     <img src="assets/user.png" alt="User Icon" />
                 </div>
-                <h2>Login</h2>
-                <form action="#" method="POST">
+                <h2>Register</h2>
+                <form id="registerForm">
                     <div class="form-group">
                         <input type="text" placeholder="Username" required id="username" name="username" />
                     </div>
@@ -34,12 +31,36 @@
                     <div class="form-group">
                         <input type="password" placeholder="Password" required id="password" name="password" />
                     </div>
-                    <button type="submit" class="btn auth-btn">Login</button>
+                    <button type="submit" class="btn auth-btn">Create</button>
                 </form>
                 <p>Already have an account? <a href="/login.html">Login</a></p>
             </div>
         </div>
     </section>
+
+    <script>
+        document.getElementById("registerForm").addEventListener("submit", async function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            const response = await fetch("http://localhost:4000/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, email, password }),
+            });
+
+            const data = await response.json();
+            alert(data.message); // Show a message to the user
+
+            if (response.ok) {
+                localStorage.setItem("token", data.token);
+                window.location.href = "/index.html"; // Redirect to home page if registration is successful
+            }
+        });
+    </script>
     
     <script src="header.js"></script>
 </body>

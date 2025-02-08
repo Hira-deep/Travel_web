@@ -101,6 +101,7 @@
   a {
     color: #0b2727;
     text-decoration: none;
+    font-style: bold;
   }
   
   a:hover {

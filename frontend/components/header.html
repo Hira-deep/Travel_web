@@ -1,31 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="header.css">
     <link rel="stylesheet" href="style.css">
 
-    <title>header</title>
-</head>
-<body>
+    <title>Header</title>
     <style>
         .navbar {
-            
             display: flex;
             align-items: center;
             justify-content: space-between;
             background-color: white;
             padding: 15px 20px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0);
-            margin:0px 40px 0px 40px;
+            margin: 0px 40px 0px 40px;
             height: 80px;
         }
-    
+
         .logo {
             height: 50px;
         }
-    
+
         nav a {
             text-decoration: none;
             color: black;
@@ -33,15 +30,14 @@
             margin: 0 15px;
             font-size: 20px;
             transition: font-size 0.2s ease-in-out;
-            
         }
-    
+
         nav a:hover,
         nav a.active {
             font-size: 25px;
             text-decoration: none;
         }
-    
+
         .buttons .btn {
             background-color: black;
             color: white;
@@ -50,21 +46,131 @@
             text-decoration: none;
             margin-left: 10px;
         }
-    
+
         .buttons .btn:hover {
             opacity: 0.8;
         }
+
+        /* Profile Dropdown Menu */
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .profile-btn img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        .profile-menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            min-width: 200px;
+            padding: 10px;
+            z-index: 100;
+        }
+
+        .profile-menu a {
+            text-decoration: none;
+            color: black;
+            display: block;
+            padding: 10px;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .profile-menu a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .show {
+            display: block;
+        }
     </style>
+</head>
+
+<body>
     <div class="navbar">
         <img src="assets/logo.png" alt="Logo" class="logo">
         <nav>
             <a href="/index.html">Home</a>
             <a href="/destinations.html">Destinations</a>
         </nav>
-        <div class="buttons">
+        <div class="buttons" id="auth-buttons">
             <a href="/login.html" class="btn">Login</a>
             <a href="/register.html" class="btn">Register</a>
         </div>
+        <div class="profile-dropdown" id="profile-dropdown" style="display: none;">
+            <button class="profile-btn" onclick="toggleProfileMenu()">
+                <img src="assets/user.png" alt="User Icon">
+            </button>
+            <div class="profile-menu" id="profile-menu">
+                
+            </div>
+        </div>
     </div>
-    
-    </body>
+
+
+
+    <script>
+        // Function to check if the user is logged in and show the profile menu
+        function checkLoginStatus() {
+            const token = localStorage.getItem("token");
+            const authButtons = document.getElementById("auth-buttons");
+            const profileDropdown = document.getElementById("profile-dropdown");
+
+            if (token) {
+                // If token exists, show profile menu and hide login/register buttons
+                authButtons.style.display = "none";
+                profileDropdown.style.display = "inline-block";
+
+                // Fetch user profile information
+                fetchUserProfile(token);
+            } else {
+                // If no token, show login/register buttons
+                authButtons.style.display = "flex";
+                profileDropdown.style.display = "none";
+            }
+        }
+
+        // Fetch user profile data using the /profile API
+        function fetchUserProfile(token) {
+            fetch("http://localhost:4000/api/auth/profile", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.user) {
+                        // Update the profile menu with user data
+                        document.querySelector("#profile-menu").innerHTML = `
+                <a href="#">${data.user.username}</a>
+                <a href="login.html" onclick="logout()">Logout</a>
+        `;
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching user profile:", error);
+                });
+        }
+
+        checkLoginStatus();
+    </script>
+</body>
+
+</html>

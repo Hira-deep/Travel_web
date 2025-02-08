@@ -3,30 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" src="style.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="login.css">
 
-
-    <title>register</title>
+    <title>Login</title>
 </head>
 <body>
     <div id="header-container"></div>
 
     <section class="login-section">
         <div class="login-container">
-            
             <div class="login-image">
                 <img src="assets/login.png" alt="Login Image" />
             </div>
-            
+
             <div class="login-form">
                 <div class="user-icon">
                     <img src="assets/user.png" alt="User Icon" />
                 </div>
                 <h2>Login</h2>
-                <form action="#" method="POST">
+                <form id="loginForm">
                     <div class="form-group">
-                        <input type="text" placeholder="Email" required id="email" name="email" />
+                        <input type="email" placeholder="Email" required id="email" name="email" />
                     </div>
                     <div class="form-group">
                         <input type="password" placeholder="Password" required id="password" name="password" />
@@ -39,5 +37,34 @@
     </section>
     
     <script src="header.js"></script>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            // Send a POST request to the backend with login data
+            const response = await fetch("http://localhost:4000/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            // Display response message
+            alert(data.message);
+
+            // If login is successful, redirect to the dashboard or homepage
+            if (response.ok) {
+                console.log(localStorage.setItem("token", data.token));
+                window.location.href = "/index.html"; // Redirect to a dashboard page
+            } else {
+                console.error(data.error);
+            }
+        });
+    </script>
 </body>
 </html>
