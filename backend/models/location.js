@@ -1,14 +1,12 @@
 const mongoose = require("mongoose");
 
 const locationSchema = new mongoose.Schema({
-  place_id: String,
-  place_name: String,
-  address: String,
-  country: String,
-  rating: Number,
-  image_url: String,
+    place_id: { type: String, required: true, unique: true },
+    place_name: { type: String, required: true },
+    address: { type: String, required: true },
+    country: { type: String, required: true },
+    rating: { type: String },
+    image_url: { type: String }
 });
 
-const Location = mongoose.model("Location", locationSchema);
-
-module.exports = Location;
+module.exports = mongoose.model("Location", locationSchema);
