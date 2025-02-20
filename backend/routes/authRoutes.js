@@ -2,7 +2,17 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const axios = require("axios");
+require("dotenv").config();
+
 const User = require('../models/user');
+const Location = require('../models/location');
+
+// Load API keys from .env
+const AUTOCOMPLETE_KEY = process.env.GEOAPIFY_AUTOCOMPLETE_KEY;
+const PLACES_DETAILS_KEY = process.env.GEOAPIFY_PLACES_DETAILS_KEY;
+
+
 
 const router = express.Router();
 
@@ -50,5 +60,60 @@ router.get('/profile', async (req, res) => {
     res.status(400).json({ message: 'Invalid token' });
   }
 });
+
+
+// Route: Autocomplete API (Search Suggestions)
+router.get("/autocomplete", async (req, res) => {
+  try {
+    const { q } = req.query;
+    const response = await axios.get(
+      `https://api.geoapify.com/v1/geocode/autocomplete?text=${q}&apiKey=${AUTOCOMPLETE_KEY}`
+    );
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch autocomplete results" });
+  }
+});
+
+// Route: Place Details API (Fetch Full Location Info)
+router.get("/place-details", async (req, res) => {
+  try {
+      const { place_id } = req.query;
+      const response = await axios.get(
+          `https://api.geoapify.com/v2/place-details?id=${place_id}&apiKey=${process.env.GEOAPIFY_PLACES_DETAILS_KEY}`
+      );
+
+      console.log("Geoapify API Response:", response.data); // 🔹 Log full response
+
+      // ✅ Ensure `features` exists
+      if (response.data && response.data.features && response.data.features.length > 0) {
+          res.json(response.data.features[0]); // Send only the first feature
+      } else {
+          res.status(404).json({ error: "No details found for this place" });
+      }
+  } catch (error) {
+      console.error("Error fetching place details:", error);
+      res.status(500).json({ error: "Failed to fetch place details" });
+  }
+});
+
+// Route: Save Selected Location to MongoDB
+router.post("/save-location", async (req, res) => {
+  try {
+    const { place_id, place_name, address, country, rating, image_url } = req.body;
+    const newLocation = new Location({ place_id, place_name, address, country, rating, image_url });
+    await newLocation.save();
+    res.json({ message: "Location saved successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to save location" });
+  }
+});
+
+
+console.log("Geoapify Autocomplete Key:", process.env.GEOAPIFY_AUTOCOMPLETE_KEY);
+console.log("Geoapify Place Details Key:", process.env.GEOAPIFY_PLACES_DETAILS_KEY);
+console.log("MongoDB URI:", process.env.MONGODB_URI);
+
+
 
 module.exports = router;

@@ -85,3 +85,10 @@ ul {
   font-size: 1.7rem;
   color: var(--heading-color);
 }
+
+#suggestionsList {
+  max-height: 200px;  /* Limit height */
+  overflow-y: auto;   /* Enable scrolling */
+  background: white;  /* Ensure visibility */
+  z-index: 1000;      /* Stay above other elements */
+}

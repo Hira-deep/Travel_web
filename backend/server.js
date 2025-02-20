@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const axios = require('axios');
 const path = require('path');
 const cors = require("cors");
 require('dotenv').config(); // Load environment variables from .env file
@@ -22,12 +23,15 @@ app.use('/assets', express.static(path.join(__dirname, '../frontend/assets')));
 app.use('/components', express.static(path.join(__dirname, "../frontend/components")));
 
 //login and register database
-app.use("/api/auth", authRoutes);
+//app.use("/api/auth", authRoutes);
 
 // Serve index.html at the root route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
 });
+
+
+
 
 // MongoDB connection
 const connectDB = async () => {
@@ -50,6 +54,9 @@ connectDB();
 app.get('/api/data', (req, res) => {
     res.json({ message: 'Hello from the backend!' });
 });
+
+//login and register database
+app.use("/api/auth", authRoutes);
 
 // Serve other pages directly (like destinations.html, login.html)
 app.get('/destinations.html', (req, res) => {

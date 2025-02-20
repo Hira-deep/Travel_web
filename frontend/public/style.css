@@ -195,3 +195,8 @@ body {
   border-radius: 50px;
   padding: 10px;
 }
+
+.card {
+  max-width: 25%;
+  margin: auto;
+}
