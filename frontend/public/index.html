@@ -53,15 +53,53 @@
         </div>
     </section>
     <!----====================== hero section ======================================= -->
+    <div class="container mt-5">
+        <h2 class="text-center">Search Location</h2>
+        
+        <!-- Search Bar -->
+        <input type="text" id="searchInput" class="form-control" placeholder="Search a location..." onkeyup="getSuggestions()">
+        <ul id="suggestionsList" class="list-group mt-2"></ul>
+    </div>
+        
+        <!-- Location Details -->
+        <div id="placeDetails" class="card mt-4 d-none">
+            <img id="placeImage" src="" class="card-img-top img-fluid" alt="Place Image">
+            <div class="card-body">
+                <h4 id="placeName" class="card-title"></h4>
+                <p class="card-text"><strong>Address:</strong> <span id="placeAddress"></span></p>
+                <p class="card-text"><strong>Country:</strong> <span id="placeCountry"></span></p>
+                <p class="card-text"><strong>Rating:</strong> <span id="placeRating"></span></p>
+            </div>
+        </div>
+        <div class="container">
+        <h3>Nearby Places  </h3><br>
+        <div id="nearbyPlaces"></div>
+        </div>
 
 
+<<<<<<< HEAD
 
+=======
+        <script>
+            document.addEventListener("click", function (event) {
+                const searchInput = document.getElementById("searchInput");
+                const suggestionsList = document.getElementById("suggestionsList");
+        
+                if (!searchInput.contains(event.target) && !suggestionsList.contains(event.target)) {
+                    suggestionsList.innerHTML = ""; // Hide dropdown
+                }
+            });
+        </script>
+        
+        
+>>>>>>> 5c8b313e1081f10ae8055ee495a316b40e55baa0
     
 
     <div id="footer"></div>
 
     <!-- Include the JavaScript for the header -->
     <script src="header.js"></script>
+    <script src="searchbar.js"></script>
     <script src="footer.js"></script>
     <script src="testimonial.js"></script>
 
