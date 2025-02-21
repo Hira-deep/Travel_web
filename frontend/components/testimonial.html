@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Testimonials</title>
+  <!-- Add Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .testimonial img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+    }
+    .testimonial {
+      padding: 20px 30px;
+      text-align: center;
+    }
+    .testimonial h5 {
+      margin-bottom: 0;
+      margin-top: 15px;
+    }
+    .testimonial p {
+      margin-top: 15px;
+    }
+    .d-flex {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+    }
+    .carousel-item {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+    .carousel-item .testimonial {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="testimonialCarousel" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <div class="testimonial">
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda, iure. Dolorum commodi fugit voluptate quia facilis minima ullam? Nulla placeat nobis obcaecati accusantium quibusdam eum rerum?</p>
+          <div class="d-flex">
+            <img src="assets/testi2.jpg" alt="John Doe" />
+            <div>
+              <h5>John Doe</h5>
+              <p>Customer</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="testimonial">
+          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Consequatur distinctio ab quas! Accusamus praesentium totam error, voluptas officiis nesciunt cumque, dolor saepe numquam illo cum dicta.</p>
+          <div class="d-flex">
+            <img src="assets/testi2.jpg" alt="Lia Frank" />
+            <div>
+              <h5>Lia Frank</h5>
+              <p>Customer</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial">
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam nihil a corporis doloribus reprehenderit libero minus iusto accusantium, aliquid perferendis autem nobis nostrum in!</p>
+          <div class="d-flex">
+            <img src="assets/testi2.jpg" alt="Pandey" />
+            <div>
+              <h5>Pandey</h5>
+              <p>Customer</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="carousel-item">
+        <div class="testimonial">
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione facere dolor aperiam aliquid sequi eius fugiat, dolore veritatis minus nulla sit maiores at velit!</p>
+          <div class="d-flex">
+            <img src="assets/testi2.jpg" alt="John Doe" />
+            <div>
+              <h5>John Doe</h5>
+              <p>Customer</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="testimonial">
+          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Impedit excepturi inventore ipsa delectus corporis cumque dicta ducimus similique deleniti sint, molestias quidem.</p>
+          <div class="d-flex">
+            <img src="assets/testi2.jpg" alt="John Doe" />
+            <div>
+              <h5>John Doe</h5>
+              <p>Customer</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial">
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit excepturi inventore ipsa delectus corporis cumque dicta ducimus similique deleniti sint, molestias quidem.</p>
+          <div class="d-flex">
+            <img src="assets/testi2.jpg" alt="Jane Doe" />
+            <div>
+              <h5>Jane Doe</h5>
+              <p>Customer</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <a class="carousel-control-prev" href="#testimonialCarousel" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#testimonialCarousel" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+
+  <!-- Add jQuery, Popper.js, and Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- Initialize the carousel -->
+  <script>
+    $(document).ready(function(){
+      $('#testimonialCarousel').carousel({
+        interval: 2000, // 2 seconds interval for automatic sliding
+        ride: 'carousel' // Automatically start carousel when the page loads
+      });
+    });
+  </script>
+
+</body>
+</html>
