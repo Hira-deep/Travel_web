@@ -19,12 +19,14 @@
     </section>
     
     
-    <div class="container mt-5">
-        <h2 class="text-center">Search Location</h2>
-        
-        <!-- Search Bar -->
-        <input type="text" id="searchInput" class="form-control" placeholder="Search a location..." onkeyup="getSuggestions()">
-        <ul id="suggestionsList" class="list-group mt-2"></ul>
+    <div class="container search-container">
+        <div class="col-lg-8">
+        <div class="search-bar">
+            <i class="bi bi-geo-alt location-icon"></i>  
+            <input type="text" id="searchInput" class="form-control" placeholder="Search a location..." onkeyup="getSuggestions()">
+            <ul id="suggestionsList" class="list-group"></ul>
+        </div>
+        </div>
     </div>
         
         <!-- Location Details -->

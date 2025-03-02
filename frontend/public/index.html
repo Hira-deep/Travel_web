@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <title>Travel Website</title>
 </head>
 
@@ -56,12 +57,14 @@
     <!----=================Search bar and display places============================ -->
 
 
-    <div class="container mt-5">
-        <h2 class="text-center">Search Location</h2>
-        
-        <!-- Search Bar -->
-        <input type="text" id="searchInput" class="form-control" placeholder="Search a location..." onkeyup="getSuggestions()">
-        <ul id="suggestionsList" class="list-group mt-2"></ul>
+    <div class="container search-container">
+        <div class="col-lg-8">
+        <div class="search-bar">
+            <i class="bi bi-geo-alt location-icon"></i>  
+            <input type="text" id="searchInput" class="form-control" placeholder="Search a location..." onkeyup="getSuggestions()">
+            <ul id="suggestionsList" class="list-group"></ul>
+        </div>
+        </div>
     </div>
         
         <!-- Location Details -->
