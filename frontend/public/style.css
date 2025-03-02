@@ -286,3 +286,151 @@ body {
 .suggestion-item:hover {
   background-color: #f8f9fa; /* Light gray on hover */
 }
+
+/* Exact Place Details */
+#placeDetails {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center; /* Center the card horizontally */
+}
+
+.place-details-card {
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  width: 100%;
+  max-width: 600px; /* Set a reasonable max-width for larger screens */
+  transition: transform 0.2s;
+  margin-bottom: 20px;
+}
+
+.place-details-card:hover {
+  transform: scale(1.05);
+}
+
+.place-details-card img {
+  width: 100%;
+  height: 300px; /* Increased height for better visibility */
+  object-fit: cover;
+}
+
+.place-details-card .card-body {
+  padding: 20px;
+  text-align: center; /* Center the text inside the card */
+}
+
+.place-details-card .card-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1a3c34;
+  margin-bottom: 10px;
+}
+
+.place-details-card .card-text {
+  font-size: 16px;
+  color: #6c757d;
+  margin-bottom: 10px;
+}
+
+.place-details-card .rating {
+  font-size: 16px;
+  color: #f28c38;
+  margin-bottom: 10px;
+}
+
+.place-details-card .price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #f28c38;
+  margin-bottom: 15px;
+}
+
+.place-details-card .btn {
+  background-color: #f28c38;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 20px;
+  font-size: 16px;
+}
+
+.place-details-card .btn:hover {
+  background-color: #e67e22;
+}
+
+/* Nearby Places Section */
+.nearby-places-section {
+  margin-top: 30px;
+}
+
+.nearby-places-section h3 {
+  font-size: 24px;
+  color: #1a3c34;
+  margin-bottom: 20px;
+}
+
+/* Card Styling for Nearby Places */
+.place-card {
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  transition: transform 0.2s;
+  margin-bottom: 20px;
+}
+
+.place-card:hover {
+  transform: scale(1.05);
+}
+
+.place-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.place-card .card-body {
+  padding: 15px;
+}
+
+.place-card .card-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1a3c34;
+  margin-bottom: 5px;
+}
+
+.place-card .card-text {
+  font-size: 14px;
+  color: #6c757d;
+  margin-bottom: 5px;
+}
+
+.place-card .rating {
+  font-size: 14px;
+  color: #f28c38;
+  margin-bottom: 10px;
+}
+
+.place-card .price {
+  font-size: 16px;
+  font-weight: bold;
+  color: #f28c38;
+  margin-bottom: 10px;
+}
+
+.place-card .btn {
+  background-color: #f28c38;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.place-card .btn:hover {
+  background-color: #e67e22;
+}

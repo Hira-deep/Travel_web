@@ -67,21 +67,26 @@
         </div>
     </div>
         
-        <!-- Location Details -->
-        <div id="placeDetails" class="card mt-4 d-none">
-            <img id="placeImage" src="" class="card-img-top img-fluid" alt="Place Image">
-            <div class="card-body">
-                <h4 id="placeName" class="card-title"></h4>
-                <p class="card-text"><strong>Address:</strong> <span id="placeAddress"></span></p>
-                <p class="card-text"><strong>Country:</strong> <span id="placeCountry"></span></p>
-                <p class="card-text"><strong>Rating:</strong> <span id="placeRating"></span></p>
+        <!-- Exact Place Details -->
+        <div id="placeDetails" class="container mt-4 d-none">
+            <div class="place-details-card">
+                <img id="placeImage" src="" class="card-img-top img-fluid" alt="Place Image">
+                <div class="card-body">
+                    <h4 id="placeName" class="card-title"></h4>
+                    <p class="card-text"><strong>Location:</strong> <span id="placeAddress"></span>, <span id="placeCountry"></span></p>
+                    <p class="rating"><strong>Rating:</strong> <span id="placeRating"></span></p>
+                    <p class="price">$99 / per person</p>
+                    <button class="btn">Book Now</button>
+                </div>
             </div>
         </div>
-        <div class="container">
-        <h3>Nearby Places  </h3><br>
-        <div id="nearbyPlaces"></div>
-        </div>
 
+        <!-- Nearby Places Section -->
+        <div class="container nearby-places-section">
+            <h3>Nearby Places</h3>
+            <div id="nearbyPlaces" class="row"></div>
+        </div>
+    </div>
 
 
         <script>
