@@ -20,7 +20,7 @@
     </script>
 
     <div id="header-container"></div>
-    
+
     <!----====================== hero section ======================================= -->
     <section>
         <div class="container">
@@ -32,7 +32,7 @@
                             <img src="assets/world.png" alt="" height="30px" width="10px">
                         </div>
                         <h1>Traveling opens the door to creating <span class="highlight">memories</span></h1>
-                       
+
                     </div>
                 </div>
                 <div class="col-lg-2">
@@ -59,63 +59,72 @@
 
     <div class="container search-container">
         <div class="col-lg-8">
-        <div class="search-bar">
-            <i class="bi bi-geo-alt location-icon"></i>  
-            <input type="text" id="searchInput" class="form-control" placeholder="Search a location..." onkeyup="getSuggestions()">
-            <ul id="suggestionsList" class="list-group"></ul>
-        </div>
-        </div>
-    </div>
-        
-        <!-- Exact Place Details -->
-        <div id="placeDetails" class="container mt-4 d-none">
-            <div class="place-details-card">
-                <img id="placeImage" src="" class="card-img-top img-fluid" alt="Place Image">
-                <div class="card-body">
-                    <h4 id="placeName" class="card-title"></h4>
-                    <p class="card-text"><strong>Location:</strong> <span id="placeAddress"></span>, <span id="placeCountry"></span></p>
-                    <p class="rating"><strong>Rating:</strong> <span id="placeRating"></span></p>
-                    <p class="price">$99 / per person</p>
-                    <button class="btn">Book Now</button>
-                </div>
+            <div class="search-bar">
+                <i class="bi bi-geo-alt location-icon"></i>
+                <input type="text" id="searchInput" class="form-control" placeholder="Search a location..."
+                    onkeyup="getSuggestions()">
+                <ul id="suggestionsList" class="list-group"></ul>
             </div>
         </div>
+    </div>
 
-        <!-- Nearby Places Section -->
-        <div class="container nearby-places-section">
-            <h3>Nearby Places</h3>
-            <div id="nearbyPlaces" class="row"></div>
+    <!-- Exact Place Details -->
+    <div id="placeDetails" class="container mt-4 d-none">
+        <div class="place-details-card">
+            <img id="placeImage" src="" class="card-img-top img-fluid" alt="Place Image">
+            <div class="card-body">
+                <h4 id="placeName" class="card-title"></h4>
+                <p class="card-text"><strong>Location:</strong> <span id="placeAddress"></span>, <span
+                        id="placeCountry"></span></p>
+                <p class="rating"><strong>Rating:</strong> <span id="placeRating"></span></p>
+                <p class="price">$99 / per person</p>
+                <button class="btn">Book Now</button>
+            </div>
         </div>
     </div>
 
+    <!-- Nearby Places Section -->
+    <div class="container nearby-places-section">
+        <h3>Nearby Places</h3>
+        <div id="nearbyPlaces" class="row"></div>
+    </div>
+    </div>
 
-        <script>
-            document.addEventListener("click", function (event) {
-                const searchInput = document.getElementById("searchInput");
-                const suggestionsList = document.getElementById("suggestionsList");
-        
-                if (!searchInput.contains(event.target) && !suggestionsList.contains(event.target)) {
-                    suggestionsList.innerHTML = ""; // Hide dropdown
-                }
-            });
-        </script>
 
-     <!-- Services --> 
-    <div id="services"></div>  
+    <script>
+        document.addEventListener("click", function (event) {
+            const searchInput = document.getElementById("searchInput");
+            const suggestionsList = document.getElementById("suggestionsList");
 
-        
-        
+            if (!searchInput.contains(event.target) && !suggestionsList.contains(event.target)) {
+                suggestionsList.innerHTML = ""; // Hide dropdown
+            }
+        });
+    </script>
+
+    <!-- Services -->
+    <div id="services"></div>
+
+    <!-- Explore -->
+    <div id="explore-page"></div>
+
+
+
+    <!-- Testimonial -->
     
+
+
+
 
     <div id="footer"></div>
 
     <!-- Include the JavaScript for the header -->
     <script src="header.js"></script>
     <script src="searchbar.js"></script>
-
     <script src="services.js"></script>
+    <script src="explore.js"></script>
     <script src="footer.js"></script>
-    
+
     <script src="testimonial.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
