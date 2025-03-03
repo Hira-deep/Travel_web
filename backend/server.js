@@ -9,6 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 const authRoutes = require("./routes/authRoutes");
+const bookingRoutes = require("./routes/bookings");
 
 // Middleware to parse JSON data
 app.use(express.json());
@@ -57,6 +58,9 @@ app.get('/api/data', (req, res) => {
 
 //login and register database
 app.use("/api/auth", authRoutes);
+
+//booking routes
+app.use("/api/bookings", bookingRoutes);
 
 // Serve other pages directly (like destinations.html, login.html)
 app.get('/destinations.html', (req, res) => {

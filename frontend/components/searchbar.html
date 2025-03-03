@@ -3,21 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Places</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Location Search</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+.container {
+    max-width: 900px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.list-group-item {
+    cursor: pointer;
+}
+
+.card {
+    border: none;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card img {
+    height: 180px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.featured-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: orange;
+    color: white;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 5px;
+}
+
+.book-now-btn {
+    background-color: orange;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    width: 100%;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.book-now-btn:hover {
+    background-color: darkorange;
+}
+
+    </style>
 </head>
 <body>
     <div class="container mt-4">
-        <h2 class="text-center">Search Places</h2>
-        <div class="input-group mb-3">
-            <input type="text" id="searchInput" class="form-control" placeholder="Enter country code (e.g., US, IN)">
-            <div class="input-group-append">
-                <button class="btn btn-primary" onclick="searchPlaces()">Search</button>
-            </div>
-        </div>
-        <div id="results" class="row"></div>
-    </div>
-   
+        <h2>Search for a Place</h2>
+        <input type="text" id="searchInput" class="form-control" placeholder="Enter location..." onkeyup="getSuggestions()">
+        <ul id="suggestionsList" class="list-group mt-2"></ul>
 
+        <div id="placesGrid" class="row mt-4"></div>
+    </div>
+
+    <script src="public/searchbar.js"></script>
 </body>
 </html>

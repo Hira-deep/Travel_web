@@ -14,13 +14,19 @@
             justify-content: space-between;
             background-color: white;
             padding: 15px 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0);
-            margin: 0px 40px 0px 40px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0);/* Adjusted shadow for visibility */
+            margin: 0px;
             height: 80px;
+            position: fixed;/* Make the navbar stick to the top */
+            top: 0;/* Align to the top of the viewport */
+            left: 0;/* Ensure it spans the full width */
+            width: 100%;/* Full width of the viewport */
+            z-index: 1000;/* Ensure it stays above other content */
         }
 
         .logo {
             height: 50px;
+            padding-left: 4%;
         }
 
         nav a {
@@ -29,21 +35,21 @@
             align-items: right;
             margin: 0 15px;
             font-size: 20px;
-            transition: font-size 0.2s ease-in-out;
+            transition: 0.2s ease-in-out;
         }
 
         nav a:hover,
         nav a.active {
             font-size: 25px;
             text-decoration: none;
-            color:black;
+            color: black;
 
         }
 
         .buttons .btn {
             background-color: black;
             color: white;
-            padding: 10px 20px;
+            padding: 10px 30px;
             border-radius: 15px;
             text-decoration: none;
             margin-left: 10px;
@@ -51,7 +57,7 @@
 
         .buttons .btn:hover {
             opacity: 0.8;
-            color: white;
+
         }
 
         /* Profile Dropdown Menu */
@@ -120,7 +126,7 @@
                 <img src="assets/user.png" alt="User Icon">
             </button>
             <div class="profile-menu" id="profile-menu">
-                
+
             </div>
         </div>
     </div>

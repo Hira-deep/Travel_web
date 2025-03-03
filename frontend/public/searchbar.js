@@ -6,7 +6,7 @@ async function getSuggestions() {
     const suggestionsList = document.getElementById("suggestionsList");
 
     if (query.length < 3) {
-        suggestionsList.innerHTML = "";  // Clear if query is too short
+        suggestionsList.innerHTML = ""; // Clear if query is too short
         return;
     }
 
@@ -14,7 +14,7 @@ async function getSuggestions() {
         const response = await fetch(`${apiUrl}/autocomplete?q=${query}`);
         const data = await response.json();
 
-        suggestionsList.innerHTML = "";  // Clear previous results
+        suggestionsList.innerHTML = ""; // Clear previous results
         suggestionsList.style.display = "block"; // Show dropdown
 
         if (data.features && data.features.length > 0) {
@@ -47,7 +47,7 @@ async function selectLocation(placeId, placeName, lat, lon) {
                 address: data.address || "N/A",
                 country: data.country || "N/A",
                 rating: data.rating || "No Rating",
-                image_url: data.image_url || "https://via.placeholder.com/300",
+                image_url: data.image_url || "https://via.placeholder.com/300", // Placeholder image if none provided
             };
 
             // Save to database
@@ -57,7 +57,7 @@ async function selectLocation(placeId, placeName, lat, lon) {
                 body: JSON.stringify(placeData),
             });
 
-            // Display place details in UI
+            // Display exact place details in UI
             document.getElementById("placeName").textContent = placeData.place_name;
             document.getElementById("placeAddress").textContent = placeData.address;
             document.getElementById("placeCountry").textContent = placeData.country;
@@ -65,7 +65,7 @@ async function selectLocation(placeId, placeName, lat, lon) {
             document.getElementById("placeImage").src = placeData.image_url;
             document.getElementById("placeDetails").classList.remove("d-none");
 
-            // Fetch and display 10 nearby places
+            // Fetch and display nearby places
             fetchNearbyPlaces(lat, lon);
         } else {
             console.error("❌ Invalid place details response:", data);
@@ -87,7 +87,7 @@ async function fetchNearbyPlaces(lat, lon) {
     }
 }
 
-// Function: Display 10 Nearby Places in UI
+// Function: Display Nearby Places in UI
 function displayNearbyPlaces(data) {
     const nearbyPlacesDiv = document.getElementById("nearbyPlaces");
     nearbyPlacesDiv.innerHTML = "";
@@ -97,13 +97,22 @@ function displayNearbyPlaces(data) {
         return;
     }
 
-    data.features.forEach(place => {
+    // Limit to 10 places to match the 3-3-3-1 layout
+    const places = data.features.slice(0, 10);
+
+    places.forEach((place, index) => {
         const placeCard = `
-            <div class="place-card">
-                <h3>${place.properties.name || "Unknown Place"}</h3>
-                <p>Address: ${place.properties.address_line2 || "N/A"}</p>
-                <p>Category: ${place.properties.categories.join(", ")}</p>
-                <p>Rating: ${place.properties.rank?.confidence || "No Rating"}</p>
+            <div class="col-md-4">
+                <div class="place-card">
+                    <img src="${place.image_url || "https://via.placeholder.com/300"}" class="card-img-top img-fluid" alt="${place.properties.name || "Unknown Place"}">
+                    <div class="card-body">
+                        <h4 class="card-title">${place.properties.name || "Unknown Place"}</h4>
+                        <p class="card-text">${place.properties.address_line2 || "N/A"}</p>
+                        <p class="rating">${place.properties.rank?.confidence || "Not Rated"}</p>
+                        <p class="price">$99 / per person</p>
+                        <button class="btn">Book Now</button>
+                    </div>
+                </div>
             </div>
         `;
         nearbyPlacesDiv.innerHTML += placeCard;
