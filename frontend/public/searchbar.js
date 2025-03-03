@@ -110,7 +110,7 @@ function displayNearbyPlaces(data) {
                         <p class="card-text">${place.properties.address_line2 || "N/A"}</p>
                         <p class="rating">${place.properties.rank?.confidence || "Not Rated"}</p>
                         <p class="price">$99 / per person</p>
-                        <button class="btn">Book Now</button>
+                        <button class="btn" onclick="navigateToBooking()" >Book Now</button>
                     </div>
                 </div>
             </div>
@@ -128,3 +128,24 @@ document.addEventListener("click", function (event) {
         suggestionsList.style.display = "none"; // Hide dropdown
     }
 });
+
+function navigateToBooking() {
+    const placeName = document.getElementById("placeName").textContent;
+    const placeImage = document.getElementById("placeImage").src;
+    const placeAddress = document.getElementById("placeAddress").textContent;
+    const placeCountry = document.getElementById("placeCountry").textContent;
+    const placeRating = document.getElementById("placeRating").textContent;
+
+    // Encode the data in the URL as query parameters
+    const queryParams = new URLSearchParams({
+        placeName: placeName,
+        placeImage: placeImage,
+        placeAddress: placeAddress,
+        placeCountry: placeCountry,
+        placeRating: placeRating,
+        price: "99" // Fixed price
+    }).toString();
+
+    // Navigate to the booking page with query parameters
+    window.location.href = `booking.html?${queryParams}`;
+}

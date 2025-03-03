@@ -6,7 +6,7 @@ const cors = require("cors");
 require('dotenv').config(); // Load environment variables from .env file
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 4001;
 
 const authRoutes = require("./routes/authRoutes");
 const bookingRoutes = require("./routes/bookings");
