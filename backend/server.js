@@ -81,6 +81,7 @@ app.use("/api/auth", authRoutes);
 //booking routes
 app.use("/api/bookings", bookingRoutes);
 
+
 // Serve other pages directly (like destinations.html, login.html)
 app.get('/destinations.html', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/public/destinations.html'));
