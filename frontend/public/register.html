@@ -39,27 +39,34 @@
     </section>
 
     <script>
-        document.getElementById("registerForm").addEventListener("submit", async function(event) {
-            event.preventDefault(); // Prevent the default form submission
-
+        document.getElementById("registerForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
             const username = document.getElementById("username").value;
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
-            const response = await fetch("http://localhost:4000/api/auth/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, email, password }),
-            });
+            try {
+                const response = await fetch("http://localhost:4000/api/auth/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, email, password }),
+                    credentials: "include", // Enable sessions
+                });
 
-            const data = await response.json();
-            alert(data.message); // Show a message to the user
+                const data = await response.json();
 
-            if (response.ok) {
-                localStorage.setItem("token", data.token);
-                window.location.href = "/index.html"; // Redirect to home page if registration is successful
+                if (response.ok) {
+                    alert("Registration successful!");
+                    window.location.href = "/index.html"; // Redirect to homepage
+                } else {
+                    alert(data.error || "Registration failed. Try again.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
             }
         });
+            
     </script>
         <div id="footer"></div>
 

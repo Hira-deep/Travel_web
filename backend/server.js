@@ -3,18 +3,40 @@ const mongoose = require('mongoose');
 const axios = require('axios');
 const path = require('path');
 const cors = require("cors");
+const session = require("express-session");
+const MongoStore = require('connect-mongo');
+
+const bodyParser = require('body-parser');
+
 require('dotenv').config(); // Load environment variables from .env file
 
 const app = express();
-const PORT = process.env.PORT || 4001;
+const PORT = process.env.PORT || 4000;
 
 const authRoutes = require("./routes/authRoutes");
 const bookingRoutes = require("./routes/bookings");
 
 // Middleware to parse JSON data
-app.use(express.json());
-app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
+app.use(express.json());
+app.use(cors({
+    origin: "http://localhost:4000", // Your frontend URL
+    credentials: true // Allow session cookies
+}));
+
+// Move session setup here
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+    }),
+    cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 day
+  }));
+  
 
 // Serve static files from the frontend/public directory
 app.use(express.static(path.join(__dirname, '../frontend/public')));
@@ -30,9 +52,6 @@ app.use('/components', express.static(path.join(__dirname, "../frontend/componen
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
 });
-
-
-
 
 // MongoDB connection
 const connectDB = async () => {

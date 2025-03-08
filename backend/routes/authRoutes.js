@@ -1,6 +1,5 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const axios = require("axios");
 require("dotenv").config();
 
@@ -9,57 +8,92 @@ const Location = require("../models/location");
 
 const router = express.Router();
 
+
 // Load API keys
 const GEOAPIFY_AUTOCOMPLETE_KEY = process.env.GEOAPIFY_AUTOCOMPLETE_KEY;
 const GEOAPIFY_PLACES_DETAILS_KEY = process.env.GEOAPIFY_PLACES_DETAILS_KEY;
 const GEOAPIFY_PLACES_KEY = process.env.GEOAPIFY_PLACES_KEY;
 
 
-// Register User
+// Middleware: Check if User is Authenticated
+const authenticateSession = (req, res, next) => {
+    if (!req.session.user) return res.status(401).json({ message: "Unauthorized" });
+    next();
+};
+
+
+
+
+// Register & Start Session
 router.post("/register", async (req, res) => {
+    const { username, email, password } = req.body;
+
     try {
-        const { username, email, password } = req.body;
+        const existingUser = await User.findOne({ email });
+        if (existingUser) return res.status(400).json({ message: "User already exists" });
+
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({ username, email, password: hashedPassword });
-
         await newUser.save();
-        const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET);
-        res.json({ message: "Registration successful", token });
+
+        // Store user in session
+        req.session.user = { id: newUser._id, username: newUser.username };
+        
+        res.status(201).json({ message: "Registration successful", user: req.session.user });
     } catch (error) {
-        res.status(400).json({ error: "Error registering user" });
+        res.status(500).json({ message: "Server error", error });
     }
 });
 
-// Login User
+// Login & Start Session
 router.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+
     try {
-        const { email, password } = req.body;
         const user = await User.findOne({ email });
-        if (!user) return res.status(400).json({ error: "User not found" });
+        if (!user) return res.status(400).json({ message: "User not found" });
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
+        if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-        res.json({ message: "Login successful", token });
+        // Store user in session
+        req.session.user = { id: user._id, username: user.username };
+        
+        console.log("Session after login:", req.session); // Debugging session
+
+
+        res.status(200).json({ message: "Login successful", user: req.session.user });
     } catch (error) {
-        res.status(500).json({ error: "Server error during login" });
+        res.status(500).json({ message: "Server error", error });
     }
 });
 
-// User Profile (Protected)
-router.get("/profile", async (req, res) => {
+// Logout & Destroy Session
+router.post("/logout", (req, res) => {
+    req.session.destroy((err) => {
+        if (err) return res.status(500).json({ message: "Logout failed" });
+        res.clearCookie("connect.sid"); // Clear session cookie
+        res.json({ message: "Logout successful" });
+    });
+});
+
+// Get Profile (Protected)
+router.get("/profile", authenticateSession, async (req, res) => {
     try {
-        const token = req.headers.authorization?.split(" ")[1];
-        if (!token) return res.status(401).json({ error: "Not authorized" });
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.userId);
-        res.json({ user });
+        const user = await User.findById(req.session.user.id).select("-password");
+        if (!user) return res.status(404).json({ message: "User not found" });
+        res.status(200).json({ user });
     } catch (error) {
-        res.status(400).json({ error: "Invalid token" });
+        res.status(500).json({ message: "Server error", error });
     }
 });
+
+router.get("/session-debug", (req, res) => {
+    console.log("Session Debug:", req.session);  // Debugging session data
+    res.json({ session: req.session });
+});
+
+
 
 // Autocomplete Search API
 router.get("/autocomplete", async (req, res) => {

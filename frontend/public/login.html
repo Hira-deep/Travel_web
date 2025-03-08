@@ -36,39 +36,39 @@
         </div>
     </section>
     
-    <script src="header.js"></script>
 
     <script>
-        document.getElementById("loginForm").addEventListener("submit", async function(event) {
-            event.preventDefault(); // Prevent the default form submission
-
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
-            // Send a POST request to the backend with login data
-            const response = await fetch("http://localhost:4000/api/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
-            });
+            try {
+                const response = await fetch("http://localhost:4000/api/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password }),
+                    credentials: "include", // Allow session handling
+                });
 
-            const data = await response.json();
+                const data = await response.json();
 
-            // Display response message
-            alert(data.message);
-
-            // If login is successful, redirect to the dashboard or homepage
-            if (response.ok) {
-                console.log(localStorage.setItem("token", data.token));
-                window.location.href = "/index.html"; // Redirect to a dashboard page
-            } else {
-                console.error(data.error);
+                if (response.ok) {
+                    alert("Login successful!");
+                    window.location.href = "/index.html"; // Redirect on success
+                } else {
+                    alert(data.error || "Login failed. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
             }
         });
     </script>
 
 <div id="footer"></div>
 
+<script src="header.js"></script>
 
 <script src="footer.js"></script>
 
