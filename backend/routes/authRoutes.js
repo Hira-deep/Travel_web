@@ -17,7 +17,7 @@ const GEOAPIFY_PLACES_KEY = process.env.GEOAPIFY_PLACES_KEY;
 
 // Middleware: Check if User is Authenticated
 const authenticateSession = (req, res, next) => {
-    if (!req.session.user) return res.status(401).json({ message: "Unauthorized" });
+    if (!req.session.user || req.session.user.id === 'guest') return res.status(401).json({ message: "Unauthorized" });
     next();
 };
 
@@ -87,6 +87,8 @@ router.get("/profile", authenticateSession, async (req, res) => {
         res.status(500).json({ message: "Server error", error });
     }
 });
+
+
 
 router.get("/session-debug", (req, res) => {
     console.log("Session Debug:", req.session);  // Debugging session data

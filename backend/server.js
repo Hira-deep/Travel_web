@@ -15,6 +15,7 @@ const PORT = process.env.PORT || 4000;
 
 const authRoutes = require("./routes/authRoutes");
 const bookingRoutes = require("./routes/bookings");
+const itineraryRoutes = require("./routes/itineraryRoutes");
 
 // Middleware to parse JSON data
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,6 +26,8 @@ app.use(cors({
     origin: "http://localhost:4000", // Your frontend URL
     credentials: true // Allow session cookies
 }));
+app.use(itineraryRoutes); // Mount the router
+
 
 // Move session setup here
 app.use(session({
@@ -70,6 +73,15 @@ const connectDB = async () => {
 // Call the connectDB function
 connectDB();
 
+
+// Middleware to set guest user if not logged in
+app.use((req, res, next) => {
+    if (!req.session.user) {
+        req.session.user = { id: 'guest', username: 'Guest' };
+    }
+    next();
+});
+
 // Sample API route (for backend API requests)
 app.get('/api/data', (req, res) => {
     res.json({ message: 'Hello from the backend!' });
@@ -81,6 +93,8 @@ app.use("/api/auth", authRoutes);
 //booking routes
 app.use("/api/bookings", bookingRoutes);
 
+//itinerary routes
+app.use("/api", itineraryRoutes);
 
 // Serve other pages directly (like destinations.html, login.html)
 app.get('/destinations.html', (req, res) => {
@@ -93,6 +107,10 @@ app.get('/login.html', (req, res) => {
 
 app.get('/register.html', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/public/register.html'));
+});
+
+app.get('/result_trip.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/public/result_trip.html'));
 });
 
 // Start the server

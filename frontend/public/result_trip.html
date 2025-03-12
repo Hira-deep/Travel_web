@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Travel Itinerary</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .itinerary-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .itinerary-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .day-title {
+            font-weight: bold;
+            font-size: 1.4rem;
+            margin-top: 15px;
+        }
+        .day-card {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        .btn {
+            background: darkorange;
+            color: #e7f1ff;
+        }
+        
+        .container{
+            margin-top: 7%;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="header-container"></div>
+
+    <div class="container itinerary-container mt-5">
+        <h1 class="mb-4 text-center">Your Travel Itinerary</h1>
+        <div id="itineraryContent"></div>
+        <a href="/trip_planner.html" class="btn btn-warning mt-3">Create New Itinerary</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const itineraryId = sessionStorage.getItem('itineraryId');
+            if (itineraryId) {
+                try {
+                    const response = await fetch(`http://localhost:4000/api/itinerary/${itineraryId}`);
+                    const itinerary = await response.json();
+                    
+                    if (itinerary.error) {
+                        throw new Error(itinerary.error);
+                    }
+
+                    let formattedItinerary = `<h3>${itinerary.destination} - ${itinerary.duration} Days</h3>
+                        <p><strong>Budget:</strong> ${itinerary.budget}</p>
+                        <p><strong>Traveling with:</strong> ${itinerary.companions}</p>`;
+
+                    const days = itinerary.details.split("Day ");
+                    
+                    days.forEach((day, index) => {
+                        if (day.trim() && index > 0) { // Ignore "Day 0"
+                            const activities = day.trim().split(/\d+\.\s/).filter(item => item.trim() !== ""); // Split into bullet points
+                            formattedItinerary += `
+                                <div class="day-card">
+                                    <p class="day-title">Day ${index}</p>
+                                    <ul>
+                                        ${activities.map(activity => `<li>${activity.trim()}</li>`).join("")}
+                                    </ul>
+                                </div>`;
+                        }
+                    });
+
+                    document.getElementById('itineraryContent').innerHTML = formattedItinerary;
+                    sessionStorage.removeItem('itineraryId'); // Clean up
+                } catch (error) {
+                    document.getElementById('itineraryContent').innerHTML = `
+                        <p class="text-danger">Error loading itinerary: ${error.message}</p>
+                    `;
+                }
+            } else {
+                document.getElementById('itineraryContent').innerHTML = `
+                    <p class="text-danger">No itinerary found. Please create one first.</p>
+                `;
+            }
+        });
+    </script>
+
+     <div id="footer"></div>
+
+    <script src="header.js"></script>
+    <script src="footer.js"></script>
+
+</body>
+</html>
