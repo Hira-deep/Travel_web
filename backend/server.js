@@ -78,11 +78,12 @@ connectDB();
 
 // Middleware to set guest user if not logged in
 app.use((req, res, next) => {
-    if (!req.session.user) {
-        req.session.user = { id: 'guest', username: 'Guest' };
+    if (!req.session.user || req.session.user.id === undefined) {
+        req.session.user = { id: "guest", username: "Guest" };
     }
     next();
 });
+
 
 // Sample API route (for backend API requests)
 app.get('/api/data', (req, res) => {

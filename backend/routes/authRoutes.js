@@ -17,7 +17,9 @@ const GEOAPIFY_PLACES_KEY = process.env.GEOAPIFY_PLACES_KEY;
 
 // Middleware: Check if User is Authenticated
 const authenticateSession = (req, res, next) => {
-    if (!req.session.user || req.session.user.id === 'guest') return res.status(401).json({ message: "Unauthorized" });
+    if (!req.session || !req.session.user) {
+        return res.status(401).json({ message: "Unauthorized: No session found" });
+    }
     next();
 };
 
@@ -78,15 +80,21 @@ router.post("/logout", (req, res) => {
 });
 
 // Get Profile (Protected)
-router.get("/profile", authenticateSession, async (req, res) => {
+router.get("/profile", async (req, res) => {
+    if (!req.session || !req.session.user) {
+        return res.status(401).json({ message: "Unauthorized: No session found" });
+    }
+
     try {
         const user = await User.findById(req.session.user.id).select("-password");
         if (!user) return res.status(404).json({ message: "User not found" });
+
         res.status(200).json({ user });
     } catch (error) {
         res.status(500).json({ message: "Server error", error });
     }
 });
+
 
 
 
