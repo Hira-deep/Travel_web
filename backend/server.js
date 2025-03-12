@@ -27,6 +27,8 @@ app.use(cors({
     credentials: true // Allow session cookies
 }));
 app.use(itineraryRoutes); // Mount the router
+app.use(bookingRoutes); // Mount the router
+app.use(authRoutes); // Mount the router
 
 
 // Move session setup here

@@ -54,7 +54,7 @@
         </div>
     </section>
     <!----====================== hero section ======================================= -->
-    <!----=================Search bar and display places============================ -->
+    <!----=================Search bar and display places============================ 
 
 
     <div class="container search-container">
@@ -68,7 +68,7 @@
         </div>
     </div>
 
-    <!-- Exact Place Details -->
+    
     <div id="placeDetails" class="container mt-4 d-none">
         <div class="place-details-card">
             <img id="placeImage" src="" class="card-img-top img-fluid" alt="Place Image">
@@ -77,13 +77,13 @@
                 <p class="card-text"><strong>Location:</strong> <span id="placeAddress"></span>, <span
                         id="placeCountry"></span></p>
                 <p class="rating"><strong>Rating:</strong> <span id="placeRating"></span></p>
-                <p class="price">$99 / per person</p>
+                <p class="price">₹8000 / per person</p>
                 <button class="btn" onclick="navigateToBooking()">Book Now</button>
             </div>
         </div>
     </div>
 
-    <!-- Nearby Places Section -->
+    
     <div class="container nearby-places-section">
         <h3>Nearby Places</h3>
         <div id="nearbyPlaces" class="row"></div>
@@ -92,6 +92,21 @@
 
 
     <script>
+        document.getElementById("searchInput").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                navigateToDestinations();
+            }
+        });
+
+        document.getElementById("searchButton").addEventListener("click", navigateToDestinations);
+
+        function navigateToDestinations() {
+            const query = document.getElementById("searchInput").value;
+            if (query.length < 3) return; // Prevent empty searches
+
+            window.location.href = `destinations.html?search=${encodeURIComponent(query)}`;
+        }
+
         document.addEventListener("click", function (event) {
             const searchInput = document.getElementById("searchInput");
             const suggestionsList = document.getElementById("suggestionsList");
@@ -124,11 +139,38 @@
                 placeAddress: placeAddress,
                 placeCountry: placeCountry,
                 placeRating: placeRating,
-                price: "99" // Fixed price
+                price: "8000" // Fixed price
             }).toString();
 
             // Navigate to the booking page with query parameters
             window.location.href = `booking.html?${queryParams}`;
+        }
+    </script>-->
+     <!-- Search Bar -->
+     <div class="container search-container">
+        <div class="col-lg-8">
+            <div class="search-bar">
+                <i class="bi bi-geo-alt location-icon"></i>
+                <input type="text" id="searchInput" class="form-control" placeholder="Search a location..."
+                    onkeyup="getSuggestions()">
+                <ul id="suggestionsList" class="list-group"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("suggestionsList").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                navigateToDestinations();
+            }
+        });
+
+        document.getElementById("suggestionsList").addEventListener("click", navigateToDestinations);
+
+        function navigateToDestinations() {
+            const query = document.getElementById("searchInput").value.trim();
+            if (query.length < 3) return; // Prevent empty searches
+            window.location.href = `destinations.html?search=${encodeURIComponent(query)}`;
         }
     </script>
 

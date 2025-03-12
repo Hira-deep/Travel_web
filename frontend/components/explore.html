@@ -78,7 +78,7 @@
         <div class="row">
             <!-- First Image -->
             <div class="col-md-4">
-                <div class="image-card">
+                <div class="image-card" onclick="navigateToCategory('Restaurants')">
                     <img src="assets/restaurant.jpg" alt="Image 1">
                     <div class="overlay">
                         <div class="overlay-text">Restaurants</div>
@@ -87,7 +87,7 @@
             </div>
             <!-- Second Image -->
             <div class="col-md-4 ">
-                <div class="image-card">
+                <div class="image-card" onclick="navigateToCategory('Hotels')">
                     <img src="assets/hotel1.jpg" alt="Image 2">
                     <div class="overlay">
                         <div class="overlay-text">Hotels</div>
@@ -96,7 +96,7 @@
             </div>
             <!-- Third Image -->
             <div class="col-md-4">
-                <div class="image-card">
+                <div class="image-card" onclick="navigateToCategory('Cafe')">
                     <img src="assets/cafe1.jpg" alt="Image 3">
                     <div class="overlay">
                         <div class="overlay-text">Cafe</div>
@@ -105,6 +105,12 @@
             </div>
         </div>
     </div>
+    <script>
+        function navigateToCategory(category) {
+            // Navigate to the destination page with the selected category as a query parameter
+            window.location.href = `public/destination.html?category=${encodeURIComponent(category)}`;
+        }
+    </script>
 
     <!-- Bootstrap JS and Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

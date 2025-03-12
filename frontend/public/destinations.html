@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <title>destination</title>
 </head>
+
 <body>
     <div id="header-container"></div>
 
@@ -17,27 +19,29 @@
             <h1>Explore the World</h1>
         </div>
     </section>
-    
-    
+
+
     <div class="container search-container">
         <div class="col-lg-8">
-        <div class="search-bar">
-            <i class="bi bi-geo-alt location-icon"></i>  
-            <input type="text" id="searchInput" class="form-control" placeholder="Search a location..." onkeyup="getSuggestions()">
-            <ul id="suggestionsList" class="list-group"></ul>
-        </div>
+            <div class="search-bar">
+                <i class="bi bi-geo-alt location-icon"></i>
+                <input type="text" id="searchInput" class="form-control" placeholder="Search a location..."
+                    onkeyup="getSuggestions()">
+                <ul id="suggestionsList" class="list-group"></ul>
+            </div>
         </div>
     </div>
-        
-     <!-- Exact Place Details -->
-     <div id="placeDetails" class="container mt-4 d-none">
+
+    <!-- Exact Place Details -->
+    <div id="placeDetails" class="container mt-4 d-none">
         <div class="place-details-card">
             <img id="placeImage" src="" class="card-img-top img-fluid" alt="Place Image">
             <div class="card-body">
                 <h4 id="placeName" class="card-title"></h4>
-                <p class="card-text"><strong>Location:</strong> <span id="placeAddress"></span>, <span id="placeCountry"></span></p>
+                <p class="card-text"><strong>Location:</strong> <span id="placeAddress"></span>, <span
+                        id="placeCountry"></span></p>
                 <p class="rating"><strong>Rating:</strong> <span id="placeRating"></span></p>
-                <p class="price">$99 / per person</p>
+                <p class="price">₹8000 / per person</p>
                 <button class="btn" onclick="navigateToBooking()">Book Now</button>
             </div>
         </div>
@@ -48,18 +52,35 @@
         <h3>Nearby Places</h3>
         <div id="nearbyPlaces" class="row"></div>
     </div>
-</div>
-        <script>
-            document.addEventListener("click", function (event) {
-                const searchInput = document.getElementById("searchInput");
-                const suggestionsList = document.getElementById("suggestionsList");
-        
-                if (!searchInput.contains(event.target) && !suggestionsList.contains(event.target)) {
-                    suggestionsList.innerHTML = ""; // Hide dropdown
-                }
-            });
+    </div>
+    <script>
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchQuery = urlParams.get("search");
+            const category = urlParams.get("category"); // Get category from URL
 
-            function navigateToBooking() {
+            if (searchQuery) {
+                document.getElementById("searchInput").value = searchQuery;
+                getSuggestions(searchQuery);
+            }
+
+            if (category) {
+                document.getElementById("searchInput").value = category; // Pre-fill search
+                getSuggestions(category); // Trigger search for category
+            }
+        };
+
+
+        document.addEventListener("click", function (event) {
+            const searchInput = document.getElementById("searchInput");
+            const suggestionsList = document.getElementById("suggestionsList");
+
+            if (!searchInput.contains(event.target) && !suggestionsList.contains(event.target)) {
+                suggestionsList.innerHTML = ""; // Hide dropdown
+            }
+        });
+
+        function navigateToBooking() {
             const placeName = document.getElementById("placeName").textContent;
             const placeImage = document.getElementById("placeImage").src;
             const placeAddress = document.getElementById("placeAddress").textContent;
@@ -73,13 +94,13 @@
                 placeAddress: placeAddress,
                 placeCountry: placeCountry,
                 placeRating: placeRating,
-                price: "99" // Fixed price
+                price: "8000" // Fixed price
             }).toString();
 
             // Navigate to the booking page with query parameters
             window.location.href = `booking.html?${queryParams}`;
         }
-        </script>
+    </script>
 
     <div id="footer"></div>
 
@@ -93,4 +114,5 @@
 
 
 </body>
+
 </html>

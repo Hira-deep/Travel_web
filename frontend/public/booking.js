@@ -14,9 +14,9 @@
         document.getElementById("placeCountry").textContent = placeCountry;
         document.getElementById("placeRating").textContent = placeRating;
         document.getElementById("placePrice").textContent = price;
-        document.getElementById("basePrice").textContent = `$${price}`;
-        document.getElementById("totalBasePrice").textContent = `$${price}`;
-        document.getElementById("totalPrice").textContent = `$${parseInt(price) + 10}`; // Add $10 service charge
+        document.getElementById("basePrice").textContent = `₹${price}`;
+        document.getElementById("totalBasePrice").textContent = `₹${price}`;
+        document.getElementById("totalPrice").textContent = `₹${parseInt(price) + 150}`; // Add $10 service charge
 
         // Update total price based on number of guests
         document.getElementById("guests").addEventListener("input", function() {
@@ -24,8 +24,8 @@
             const basePrice = parseInt(price);
             const totalBase = basePrice * guests;
             const total = totalBase + 10; // Add $10 service charge
-            document.getElementById("totalBasePrice").textContent = `$${totalBase}`;
-            document.getElementById("totalPrice").textContent = `$${total}`;
+            document.getElementById("totalBasePrice").textContent = `₹${totalBase}`;
+            document.getElementById("totalPrice").textContent = `₹${total}`;
         });
 
         // Handle form submission
@@ -38,11 +38,11 @@
                 phone: document.getElementById("phone").value,
                 date: document.getElementById("date").value,
                 guests: parseInt(document.getElementById("guests").value),
-                totalPrice: parseInt(document.getElementById("totalPrice").textContent.replace("$", ""))
+                totalPrice: parseInt(document.getElementById("totalPrice").textContent.replace("₹", ""))
             };
 
             try {
-                const response = await fetch("http://localhost:4000/api/bookings", {
+                const response = await fetch("http://localhost:4000/api/bookings/", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(bookingData),
