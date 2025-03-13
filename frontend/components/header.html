@@ -109,73 +109,77 @@
             </div>
         </div>
     </div>
-
-    <script>
-        const toggleDropdown = () => {
-            const dropdownMenu = document.getElementById("dropdown-menu");
-            dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
-        };
+   <script>
+    const toggleDropdown = () => {
+        const dropdownMenu = document.getElementById("dropdown-menu");
+        const currentDisplay = dropdownMenu.style.display;
     
-        const updateNavbar = (isLoggedIn) => {
-            const authButtons = document.getElementById("auth-buttons");
-            const menuDropdown = document.getElementById("menu-dropdown");
-            
-            // Log the login status
-            console.log("Update Navbar called with isLoggedIn:", isLoggedIn);
+        // Toggle the dropdown visibility
+        if (currentDisplay === "block") {
+            dropdownMenu.style.display = "none";
+        } else {
+            dropdownMenu.style.display = "block";
+        }
+    };
     
-            if (isLoggedIn) {
-                authButtons.style.display = "none";
-                menuDropdown.style.display = "block";
-                console.log("User  is logged in. Hiding auth buttons and showing dropdown.");
-            } else {
-                authButtons.style.display = "flex";
-                menuDropdown.style.display = "none";
-                console.log("User  is not logged in. Showing auth buttons and hiding dropdown.");
-            }
-        };
+    const updateNavbar = (isLoggedIn) => {
+        const authButtons = document.getElementById("auth-buttons");
+        const menuDropdown = document.getElementById("menu-dropdown");
+        
+        console.log("Update Navbar called with isLoggedIn:", isLoggedIn);
     
-        const checkLoginStatus = async () => {
-            try {
-                const response = await fetch("http://localhost:4000/api/auth/profile", {
-                    method: "GET",
-                    credentials: "include",
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json"
-                    }
-                });
+        if (isLoggedIn) {
+            authButtons.style.display = "none";
+            menuDropdown.style.display = "block"; // Show the dropdown menu if logged in
+            console.log("User is logged in. Hiding auth buttons and showing dropdown.");
+        } else {
+            authButtons.style.display = "flex";
+            menuDropdown.style.display = "none"; // Hide the dropdown menu if not logged in
+            console.log("User is not logged in. Showing auth buttons and hiding dropdown.");
+        }
+    };
     
-                if (response.ok) {
-                    const data = await response.json();
-                    updateNavbar(!!data.user); // Update UI based on if user exists
-                } else {
-                    updateNavbar(false);
+    const checkLoginStatus = async () => {
+        try {
+            const response = await fetch("http://localhost:4000/api/auth/profile", {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
                 }
-            } catch (error) {
-                console.error("Error checking login status:", error);
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                updateNavbar(!!data.user); // Update UI based on if user exists
+            } else {
                 updateNavbar(false);
             }
-        };
+        } catch (error) {
+            console.error("Error checking login status:", error);
+            updateNavbar(false);
+        }
+    };
     
-        const handleLogout = async () => {
-            try {
-                await fetch("http://localhost:4000/api/auth/logout", {
-                    method: "POST",
-                    credentials: "include"
-                });
-                updateNavbar(false);
-                window.location.href = "/login.html";
-            } catch (error) {
-                console.error("Logout error:", error);
-            }
-        };
+    const handleLogout = async () => {
+        try {
+            await fetch("http://localhost:4000/api/auth/logout", {
+                method: "POST",
+                credentials: "include"
+            });
+            updateNavbar(false);
+            window.location.href = "/login.html";
+        } catch (error) {
+            console.error("Logout error:", error);
+        }
+    };
     
-        document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("menu-icon").addEventListener("click", toggleDropdown);
-    document.getElementById("logout-btn").addEventListener("click", handleLogout);
-    checkLoginStatus();
-});
-
-    </script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("menu-icon").addEventListener("click", toggleDropdown);
+        document.getElementById("logout-btn").addEventListener("click", handleLogout);
+        checkLoginStatus();
+    });
+</script>
 </body>
 </html>
