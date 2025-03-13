@@ -1,56 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Travel Itinerary</title>
+    <title>Travel Itinerary</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         .itinerary-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            max-width: 900px;
+            margin-top: 7%;
         }
-        .itinerary-card {
-            background: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .day-title {
-            font-weight: bold;
-            font-size: 1.4rem;
-            margin-top: 15px;
-        }
+
         .day-card {
-            padding: 15px;
             background: #f8f9fa;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            padding: 20px;
         }
-        ul {
-            padding-left: 20px;
+
+        .day-title {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #007bff;
         }
-        .btn {
+
+        .subtitle {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 15px;
+            color: #333;
+        }
+
+        .btn-orange {
             background: darkorange;
-            color: #e7f1ff;
-        }
-        
-        .container{
-            margin-top: 7%;
+            color: white;
         }
     </style>
 </head>
+
 <body>
-
     <div id="header-container"></div>
-
-    <div class="container itinerary-container ">
-        <h1 class="mb-4 text-center">Your Travel Itinerary</h1>
+    <div class="container itinerary-container">
+        <h1 class="text-center mb-4">Your Travel Itinerary</h1>
         <div id="itineraryContent"></div>
-        <a href="/trip_planner.html" class="btn btn-warning mt-3">Create New Itinerary</a>
+        <a href="/trip_planner.html" class="btn btn-orange mt-3">Create New Itinerary</a>
     </div>
 
     <script>
@@ -60,49 +55,48 @@
                 try {
                     const response = await fetch(`http://localhost:4000/api/itinerary/${itineraryId}`);
                     const itinerary = await response.json();
-                    
-                    if (itinerary.error) {
-                        throw new Error(itinerary.error);
-                    }
+                    if (itinerary.error) throw new Error(itinerary.error);
 
                     let formattedItinerary = `<h3>${itinerary.destination} - ${itinerary.duration} Days</h3>
                         <p><strong>Budget:</strong> ${itinerary.budget}</p>
                         <p><strong>Traveling with:</strong> ${itinerary.companions}</p>`;
 
                     const days = itinerary.details.split("Day ");
-                    
                     days.forEach((day, index) => {
-                        if (day.trim() && index > 0) { // Ignore "Day 0"
-                            const activities = day.trim().split(/\d+\.\s/).filter(item => item.trim() !== ""); // Split into bullet points
-                            formattedItinerary += `
-                                <div class="day-card">
-                                    <p class="day-title">Day ${index}</p>
-                                    <ul>
-                                        ${activities.map(activity => `<li>${activity.trim()}</li>`).join("")}
-                                    </ul>
-                                </div>`;
+                        if (day.trim() && index > 0) {
+                            const morning = [], afternoon = [], evening = [];
+
+                            const activities = day.split(/\d+\.\s/).filter(item => item.trim() !== "");
+                            activities.forEach(activity => {
+                                if (/morning/i.test(activity)) morning.push(activity);
+                                else if (/afternoon/i.test(activity)) afternoon.push(activity);
+                                else if (/evening|dinner/i.test(activity)) evening.push(activity);
+                            });
+
+                            formattedItinerary += `<div class="day-card">
+                                <p class="day-title">Day ${index}</p>
+                                ${morning.length ? `<p class="subtitle">Morning</p><ul>${morning.map(a => `<li>${a}</li>`).join("")}</ul>` : ""}
+                                ${afternoon.length ? `<p class="subtitle">Afternoon</p><ul>${afternoon.map(a => `<li>${a}</li>`).join("")}</ul>` : ""}
+                                ${evening.length ? `<p class="subtitle">Evening</p><ul>${evening.map(a => `<li>${a}</li>`).join("")}</ul>` : ""}
+                            </div>`;
                         }
                     });
 
                     document.getElementById('itineraryContent').innerHTML = formattedItinerary;
-                    sessionStorage.removeItem('itineraryId'); // Clean up
+                    sessionStorage.removeItem('itineraryId');
                 } catch (error) {
-                    document.getElementById('itineraryContent').innerHTML = `
-                        <p class="text-danger">Error loading itinerary: ${error.message}</p>
-                    `;
+                    document.getElementById('itineraryContent').innerHTML = `<p class="text-danger">Error loading itinerary: ${error.message}</p>`;
                 }
             } else {
-                document.getElementById('itineraryContent').innerHTML = `
-                    <p class="text-danger">No itinerary found. Please create one first.</p>
-                `;
+                document.getElementById('itineraryContent').innerHTML = `<p class="text-danger">No itinerary found. Please create one first.</p>`;
             }
         });
     </script>
-
-     <div id="footer"></div>
-
+    <div id="footer"></div>
     <script src="header.js"></script>
+
     <script src="footer.js"></script>
 
 </body>
+
 </html>
