@@ -178,7 +178,53 @@
     <div id="services"></div>
 
     <!-- Explore -->
-    <div id="explore-page"></div>
+    <h1 class="heading">Explore</h1>
+    <div class="container">
+        <div class="row">
+           <!-- First Image -->
+           <div class="col-md-4">
+            <div class="image-card" onclick="navigateToCategory('catering.restaurant')">
+                <img src="assets/restaurant.jpg" alt="Image 1">
+                <div class="overlay">
+                    <div class="overlay-text">Restaurants</div>
+                </div>
+            </div>
+        </div>
+        <!-- Second Image -->
+        <div class="col-md-4 ">
+            <div class="image-card" onclick="navigateToCategory('Hotels')">
+                <img src="assets/hotel1.jpg" alt="Image 2">
+                <div class="overlay">
+                    <div class="overlay-text">Hotels</div>
+                </div>
+            </div>
+        </div>
+        <!-- Third Image -->
+        <div class="col-md-4">
+            <div class="image-card" onclick="navigateToCategory('Cafe')">
+                <img src="assets/cafe1.jpg" alt="Image 3">
+                <div class="overlay">
+                    <div class="overlay-text">Cafe</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    window.navigateToCategory = function (category) {
+        window.location.href = `destinations.html?category=${encodeURIComponent(category)}`;
+    };
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".image-card").forEach(card => {
+            card.addEventListener("click", function () {
+                let category = this.querySelector(".overlay-text").textContent.trim();
+                console.log("Navigating to category:", category); // Debugging
+                window.location.href =` destinations.html?category=${encodeURIComponent(category)}`;
+            });
+        });
+    });
+</script>
 
     <!-- gallery -->
     <div id="gallery"></div>

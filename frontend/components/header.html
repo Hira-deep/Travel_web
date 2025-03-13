@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Header</title>
+    <title>Navbar</title>
     <style>
         .navbar {
             display: flex;
@@ -61,11 +62,16 @@
             cursor: pointer;
         }
 
+        .dropdown {
+            position: relative;
+            display: none;
+        }
+
         .dropdown-menu {
             display: none;
             position: absolute;
-            top: 70px;
-            right: 20px;
+            top: 50px;
+            right: 0;
             background: white;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
             border-radius: 5px;
@@ -84,102 +90,106 @@
         }
     </style>
 </head>
+
 <body>
-    <div class="navbar">
+    <div id="guest-navbar" class="navbar">
         <img src="assets/logo.png" alt="Logo" class="logo">
         <nav>
             <a href="/index.html">Home</a>
             <a href="/destinations.html">Destinations</a>
             <a href="/trip_planner.html">AI Trip Planner</a>
-
         </nav>
-
-        <div class="buttons" id="auth-buttons">
+        <div class="buttons">
             <a href="/login.html" class="btn">Login</a>
             <a href="/register.html" class="btn">Register</a>
         </div>
+    </div>
 
-        <div class="dropdown" id="menu-dropdown" style="display:none;">
+    <div id="user-navbar" class="navbar" style="display: none;">
+        <img src="assets/logo.png" alt="Logo" class="logo">
+        <nav>
+            <a href="/index.html">Home</a>
+            <a href="/destinations.html">Destinations</a>
+            <a href="/trip_planner.html">AI Trip Planner</a>
+            <a href="/my_trips.html">My Trips</a>
+        </nav>
+        <div class="dropdown">
             <span class="menu-icon" id="menu-icon">☰</span>
             <div class="dropdown-menu" id="dropdown-menu">
-                <a href="/profile.html">My Profile</a>
-                <a href="/trips.html">My Trips</a>
-                <a href="/bookings.html">My Bookings</a>
+                <a href="#">My Profile</a>
+                <a href="#">My Trips</a>
+                <a href="#">My Bookings</a>
                 <a href="#" id="logout-btn">Logout</a>
             </div>
         </div>
     </div>
-   <script>
-    const toggleDropdown = () => {
-        const dropdownMenu = document.getElementById("dropdown-menu");
-        const currentDisplay = dropdownMenu.style.display;
-    
-        // Toggle the dropdown visibility
-        if (currentDisplay === "block") {
-            dropdownMenu.style.display = "none";
-        } else {
-            dropdownMenu.style.display = "block";
-        }
-    };
-    
-    const updateNavbar = (isLoggedIn) => {
-        const authButtons = document.getElementById("auth-buttons");
-        const menuDropdown = document.getElementById("menu-dropdown");
-        
-        console.log("Update Navbar called with isLoggedIn:", isLoggedIn);
-    
-        if (isLoggedIn) {
-            authButtons.style.display = "none";
-            menuDropdown.style.display = "block"; // Show the dropdown menu if logged in
-            console.log("User is logged in. Hiding auth buttons and showing dropdown.");
-        } else {
-            authButtons.style.display = "flex";
-            menuDropdown.style.display = "none"; // Hide the dropdown menu if not logged in
-            console.log("User is not logged in. Showing auth buttons and hiding dropdown.");
-        }
-    };
-    
+    <script>
     const checkLoginStatus = async () => {
         try {
-            const response = await fetch("http://localhost:4000/api/auth/profile", {
+            const response = await fetch("http://localhost:4000/api/auth/session", {
                 method: "GET",
-                credentials: "include",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                }
+                credentials: "include", // Ensures cookies are sent
             });
     
-            if (response.ok) {
-                const data = await response.json();
-                updateNavbar(!!data.user); // Update UI based on if user exists
+            if (!response.ok) {
+                throw new Error("Failed to fetch session data");
+            }
+    
+            const data = await response.json();
+            console.log("Session Data:", data); // Debugging
+    
+            const guestNavbar = document.getElementById("guest-navbar");
+            const userNavbar = document.getElementById("user-navbar");
+    
+            if (data.isAuthenticated) {
+                guestNavbar.style.display = "none";
+                userNavbar.style.display = "flex";
+    
+                // Add event listener only if user is authenticated
+                document.getElementById("logout-btn").addEventListener("click", handleLogout);
             } else {
-                updateNavbar(false);
+                guestNavbar.style.display = "flex";
+                userNavbar.style.display = "none";
             }
         } catch (error) {
             console.error("Error checking login status:", error);
-            updateNavbar(false);
+            document.getElementById("guest-navbar").style.display = "flex";
+            document.getElementById("user-navbar").style.display = "none";
         }
     };
+    
+    // Ensure this runs when the page loads
+    document.addEventListener("DOMContentLoaded", checkLoginStatus);
+    
     
     const handleLogout = async () => {
         try {
             await fetch("http://localhost:4000/api/auth/logout", {
                 method: "POST",
-                credentials: "include"
+                credentials: "include",
             });
-            updateNavbar(false);
-            window.location.href = "/login.html";
+    
+            checkLoginStatus(); // Refresh navbar state after logout
+            window.location.href = "/login.html"; // Redirect to login page
         } catch (error) {
             console.error("Logout error:", error);
         }
     };
     
+    // Toggle dropdown menu for the user navbar
+    const toggleDropdown = () => {
+        const dropdownMenu = document.getElementById("dropdown-menu");
+        dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
+    };
+    
+    // Ensure dropdown menu toggle works
     document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById("menu-icon").addEventListener("click", toggleDropdown);
-        document.getElementById("logout-btn").addEventListener("click", handleLogout);
         checkLoginStatus();
+        document.getElementById("menu-icon").addEventListener("click", toggleDropdown);
     });
-</script>
+    </script>
+
+
 </body>
+
 </html>

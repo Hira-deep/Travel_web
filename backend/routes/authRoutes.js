@@ -61,7 +61,7 @@ router.post("/login", async (req, res) => {
         // Store user in session
         req.session.user = { id: user._id, username: user.username };
         
-        console.log("Session after login:", req.session); // Debugging session
+        console.log("Session after login:", req.session.user); // Debugging session
 
 
         res.status(200).json({ message: "Login successful", user: req.session.user });
@@ -102,6 +102,15 @@ router.get("/session-debug", (req, res) => {
     console.log("Session Debug:", req.session);  // Debugging session data
     res.json({ session: req.session });
 });
+
+router.get("/session", (req, res) => {
+    if (req.session.user) {
+        res.json({ isAuthenticated: true, user: req.session.user });
+    } else {
+        res.json({ isAuthenticated: false });
+    }
+});
+
 
 
 
