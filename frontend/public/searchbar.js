@@ -52,7 +52,7 @@ async function selectLocation(placeId, placeName, lat, lon) {
                 address: data.address || "N/A",
                 country: data.country || "N/A",
                 rating: data.rating || "No Rating",
-                image_url: data.image_url || "https://via.placeholder.com/300", // Placeholder image if none provided
+                image_url: data.image_url || "../assets/default.jpg", // Placeholder image if none provided
             };
 
             // Save to database
@@ -110,7 +110,7 @@ function displayNearbyPlaces(data) {
         placeCard.classList.add("col-md-4");
         placeCard.innerHTML = `
             <div class="place-card">
-                <img src="${place.image_url || "https://via.placeholder.com/300"}" class="card-img-top img-fluid" alt="${place.properties.name || "Unknown Place"}">
+                <img src="${place.image_url || "../assets/default.jpg"}" class="card-img-top img-fluid" alt="${place.properties.name || "Unknown Place"}">
                 <div class="card-body">
                     <h4 class="card-title">${place.properties.name || "Unknown Place"}</h4>
                     <p class="card-text">${place.properties.address_line2 || "N/A"}</p>
@@ -118,7 +118,7 @@ function displayNearbyPlaces(data) {
                     <p class="price">$8000 / per person</p>
                     <button class="btn book-now-btn" 
                         data-name="${place.properties.name || 'Unknown'}" 
-                        data-image="${place.image_url || 'https://via.placeholder.com/300'}" 
+                        data-image="${place.image_url || '../assets/default.jpg'}" 
                         data-address="${place.properties.address_line2 || 'N/A'}"
                         data-country="${place.properties.country || 'N/A'}"
                         data-rating="${place.properties.rank?.confidence || 'No Rating'}">

@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const axios = require("axios");
 require("dotenv").config();
+const path = require('path');
 
 const User = require("../models/user");
 const Location = require("../models/location");
@@ -13,6 +14,7 @@ const router = express.Router();
 const GEOAPIFY_AUTOCOMPLETE_KEY = process.env.GEOAPIFY_AUTOCOMPLETE_KEY;
 const GEOAPIFY_PLACES_DETAILS_KEY = process.env.GEOAPIFY_PLACES_DETAILS_KEY;
 const GEOAPIFY_PLACES_KEY = process.env.GEOAPIFY_PLACES_KEY;
+const PIXABAY_API_KEY = process.env.PIXABAY_API_KEY;
 
 
 // Middleware: Check if User is Authenticated
@@ -149,7 +151,7 @@ router.get("/place-details", async (req, res) => {
         const placeName = details.name || details.address_line1 || "Unknown Place";
 
         // Fetch Wikipedia Image
-        let imageUrl = await getWikipediaImage(placeName);
+        let imageUrl = await getPlaceImage(placeName);
 
         res.json({
             place_id,
@@ -157,7 +159,7 @@ router.get("/place-details", async (req, res) => {
             address: details.address_line2 || "N/A",
             country: details.country || "N/A",
             rating: details.rank?.confidence || "No Rating",
-            image_url: imageUrl,
+            image_url: imageUrl || "../photo/default1.jpg",
         });
     } catch (error) {
         console.error("Error fetching place details:", error.message);
@@ -179,13 +181,12 @@ router.post("/save-location", async (req, res) => {
     }
 });
 
-// Function: Fetch Wikipedia Image
-async function getWikipediaImage(placeName) {
+// Function: Fetch Image from Wikipedia or Pixabay
+async function getPlaceImage(placeName) {
     try {
+        // 1️⃣ Fetch from Wikipedia
         const wikiResponse = await axios.get(
-            `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&pithumbsize=400&titles=${encodeURIComponent(
-                placeName
-            )}&origin=*`
+            `https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&pithumbsize=400&titles=${encodeURIComponent(placeName)}&origin=*`
         );
 
         const pages = wikiResponse.data.query.pages;
@@ -194,28 +195,40 @@ async function getWikipediaImage(placeName) {
         if (firstPage && firstPage.thumbnail) {
             return firstPage.thumbnail.source;
         }
-        return "https://via.placeholder.com/300"; // Default image
+
+        // 2️⃣ Fetch from Pixabay (if Wikipedia fails)
+        const pixabayResponse = await axios.get(
+            `https://pixabay.com/api/?key=${process.env.PIXABAY_API_KEY}&q=${encodeURIComponent(placeName)}&image_type=photo&per_page=1`
+        );
+
+        if (pixabayResponse.data.hits && pixabayResponse.data.hits.length > 0) {
+            return pixabayResponse.data.hits[0].webformatURL;
+        }
     } catch (error) {
-        console.error("Wikipedia Image Fetch Failed:", error.message);
-        return "https://via.placeholder.com/300";
+        console.error(`Image Fetch Failed for ${placeName}:`, error.message);
     }
+
+    // 3️⃣ Default image (if both APIs fail)
+    return "../photo/default1.jpg";
 }
+
+
 
 // Fetch 10 Nearby Places for a Selected Location
 router.get("/nearby-places", async (req, res) => {
-  try {
-      const { lat, lon } = req.query;
-      if (!lat || !lon) return res.status(400).json({ error: "Latitude and longitude are required" });
+    try {
+        const { lat, lon } = req.query;
+        if (!lat || !lon) return res.status(400).json({ error: "Latitude and longitude are required" });
 
-      const response = await axios.get(
-          `https://api.geoapify.com/v2/places?categories=commercial,leisure,tourism,catering,accommodation&filter=circle:${lon},${lat},5000&limit=10&apiKey=${GEOAPIFY_PLACES_KEY}`
-      );
+        const response = await axios.get(
+            `https://api.geoapify.com/v2/places?categories=commercial,leisure,tourism,catering,accommodation&filter=circle:${lon},${lat},5000&limit=10&apiKey=${GEOAPIFY_PLACES_KEY}`
+        );
 
-      res.json(response.data);
-  } catch (error) {
-      console.error("Error fetching nearby places:", error.message);
-      res.status(500).json({ error: "Failed to fetch nearby places" });
-  }
+        res.json(response.data);
+    } catch (error) {
+        console.error("Error fetching nearby places:", error.message);
+        res.status(500).json({ error: "Failed to fetch nearby places" });
+    }
 });
 
 module.exports = router;
