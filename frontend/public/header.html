@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar</title>
+    <style>
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            height: 80px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .logo {
+            height: 50px;
+            padding-left: 4%;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: black;
+            margin: 0 15px;
+            font-size: 20px;
+            transition: 0.2s ease-in-out;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: darkorange;
+            text-decoration: none;
+        }
+
+        .buttons {
+            display: flex;
+        }
+
+        .buttons .btn {
+            background-color: black;
+            color: white;
+            padding: 10px 30px;
+            border-radius: 15px;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .buttons .btn:hover {
+            opacity: 0.8;
+        }
+
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .dropdown {
+            position: relative;
+            display: none;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: white;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            min-width: 150px;
+        }
+
+        .dropdown-menu a {
+            padding: 10px;
+            display: block;
+            text-decoration: none;
+            color: black;
+        }
+
+        .dropdown-menu a:hover {
+            background: lightgray;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="guest-navbar" class="navbar">
+        <img src="assets/logo.png" alt="Logo" class="logo">
+        <nav>
+            <a href="/index.html">Home</a>
+            <a href="/destinations.html">Destinations</a>
+            <a href="/trip_planner.html">AI Trip Planner</a>
+        </nav>
+        <div class="buttons">
+            <a href="/login.html" class="btn">Login</a>
+            <a href="/register.html" class="btn">Register</a>
+        </div>
+    </div>
+
+    <div id="user-navbar" class="navbar" style="display: none;">
+        <img src="assets/logo.png" alt="Logo" class="logo">
+        <nav>
+            <a href="/index.html">Home</a>
+            <a href="/destinations.html">Destinations</a>
+            <a href="/trip_planner.html">AI Trip Planner</a>
+            <a href="/my_trips.html">My Trips</a>
+        </nav>
+        <div class="dropdown">
+            <span class="menu-icon" id="menu-icon">☰</span>
+            <div class="dropdown-menu" id="dropdown-menu">
+                <a href="#">My Profile</a>
+                <a href="#">My Trips</a>
+                <a href="#">My Bookings</a>
+                <a href="#" id="logout-btn">Logout</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            await checkLoginStatus();
+
+            const menuIcon = document.getElementById("menu-icon");
+            if (menuIcon) {
+                menuIcon.addEventListener("click", toggleDropdown);
+            }
+
+            document.addEventListener("click", (event) => {
+                const dropdownMenu = document.getElementById("dropdown-menu");
+                if (dropdownMenu && !dropdownMenu.contains(event.target) && event.target !== menuIcon) {
+                    dropdownMenu.style.display = "none";
+                }
+            });
+        });
+
+        const checkLoginStatus = async () => {
+            try {
+                const response = await fetch("http://localhost:4000/api/auth/session", {
+                    method: "GET",
+                    credentials: "include",
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch session data");
+                }
+
+                const data = await response.json();
+                console.log("Session Data:", data);
+
+                const guestNavbar = document.getElementById("guest-navbar");
+                const userNavbar = document.getElementById("user-navbar");
+
+                if (data.isAuthenticated) {
+                    guestNavbar.style.display = "none";
+                    userNavbar.style.display = "flex";
+
+                    const logoutBtn = document.getElementById("logout-btn");
+                    if (logoutBtn) {
+                        logoutBtn.addEventListener("click", handleLogout);
+                    }
+                } else {
+                    guestNavbar.style.display = "flex";
+                    userNavbar.style.display = "none";
+                }
+            } catch (error) {
+                console.error("Error checking login status:", error);
+                document.getElementById("guest-navbar").style.display = "flex";
+                document.getElementById("user-navbar").style.display = "none";
+            }
+        };
+
+        const handleLogout = async () => {
+            try {
+                await fetch("http://localhost:4000/api/auth/logout", {
+                    method: "POST",
+                    credentials: "include",
+                });
+                window.location.href = "/login.html";
+            } catch (error) {
+                console.error("Logout error:", error);
+            }
+        };
+
+        const toggleDropdown = () => {
+            const dropdownMenu = document.getElementById("dropdown-menu");
+            dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
+        };
+    </script>
+</body>
+
+</html>
