@@ -51,7 +51,7 @@
 
                 if (response.ok) {
                     alert("Booking successfully recorded!");
-                    window.location.href = "index.html"; // Redirect to homepage
+                    window.location.href = "/home.html"; // Redirect to homepage
                 } else {
                     alert("Error recording booking. Please try again.");
                 }

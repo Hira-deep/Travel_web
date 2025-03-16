@@ -11,9 +11,8 @@
             justify-content: space-between;
             background-color: white;
             padding: 15px 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             height: 80px;
-            position: fixed;
+            position:relative;
             top: 0;
             left: 0;
             width: 100%;
@@ -41,6 +40,7 @@
         .button-container {
             display: flex;
             gap: 10px;
+            margin-right: 5%;
         }
 
         .nav-button {
@@ -48,7 +48,7 @@
             background-color: darkorange;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 20px;
             font-size: 16px;
             cursor: pointer;
             transition: background-color 0.2s ease-in-out;
@@ -57,6 +57,19 @@
         .nav-button:hover {
             background-color: #e69500;
         }
+        .btn1 {
+            background-color: black;
+            color: white;
+            padding: 10px 30px;
+            border-radius: 15px;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+        .btn1:hover{
+            text-decoration: none;
+            color: white;
+        }
+       
     </style>
 </head>
    <body>
@@ -68,7 +81,7 @@
             <a href="/trip_planner.html">AI Trip Planner</a>
         </nav>
         <div class="button-container">
-            <a href="/destinations.html" class="nav-button">My Bookings</a>
+            <a href="/my_bookings.html" class="btn1">My Bookings</a>
             <button class="nav-button" id="logout-btn">Logout</button>
         </div>
     </div>
