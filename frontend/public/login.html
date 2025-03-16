@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="login.css">
-
     <title>Login</title>
 </head>
+
 <body>
-    <div id="header-container"></div>
+
 
     <section class="login-section">
         <div class="login-container">
@@ -19,15 +19,17 @@
 
             <div class="login-form">
                 <div class="user-icon">
-                    <img src="assets/user.png" alt="User Icon" />
+                    <img src="assets/user.png" alt="User  Icon" />
                 </div>
                 <h2>Login</h2>
                 <form id="loginForm">
                     <div class="form-group">
                         <input type="email" placeholder="Email" required id="email" name="email" />
+                        <span class="error-message" id="emailError"></span>
                     </div>
                     <div class="form-group">
                         <input type="password" placeholder="Password" required id="password" name="password" />
+                        <span class="error-message" id="passwordError"></span>
                     </div>
                     <button type="submit" class="btn auth-btn">Login</button>
                 </form>
@@ -35,11 +37,15 @@
             </div>
         </div>
     </section>
-    
 
     <script>
         document.getElementById("loginForm").addEventListener("submit", async (e) => {
             e.preventDefault();
+
+            if (!validateForm()) {
+                return; // Stop form submission if there are errors
+            }
+
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
@@ -55,7 +61,7 @@
 
                 if (response.ok) {
                     alert("Login successful!");
-                    window.location.href = "/index.html"; // Redirect on success
+                    window.location.href = "/home.html"; // Redirect on success
                 } else {
                     alert(data.error || "Login failed. Please try again.");
                 }
@@ -64,13 +70,39 @@
                 alert("An error occurred. Please try again.");
             }
         });
+
+        function validateForm() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            let hasError = false;
+
+            // Clear previous error messages
+            document.getElementById("emailError").style.display = "none";
+            document.getElementById("passwordError").style.display = "none";
+
+            // Validate email
+            if (!email) {
+                document.getElementById("emailError").textContent = "Email is required.";
+                document.getElementById("emailError").style.display = "block";
+                hasError = true;
+            } else if (!/\S+@\S+\.\S+/.test(email)) {
+                document.getElementById("emailError").textContent = "Email is invalid.";
+                document.getElementById("emailError").style.display = "block";
+                hasError = true;
+            }
+
+            // Validate password
+            if (!password) {
+                document.getElementById("passwordError").textContent = "Password is required.";
+                document.getElementById("passwordError").style.display = "block";
+                hasError = true;
+            }
+
+            return !hasError;
+        }
     </script>
 
-<div id="footer"></div>
-
-<script src="header.js"></script>
-
-<script src="footer.js"></script>
-
+   
 </body>
+
 </html>

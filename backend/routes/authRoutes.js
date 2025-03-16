@@ -30,22 +30,62 @@ const authenticateSession = (req, res, next) => {
 
 // Register & Start Session
 router.post("/register", async (req, res) => {
-    const { username, email, password } = req.body;
+    const { fullName, username, email, phone, age, password } = req.body;
 
     try {
-        const existingUser = await User.findOne({ email });
-        if (existingUser) return res.status(400).json({ message: "User already exists" });
+        // Additional server-side validation
+        if (fullName.length < 2) {
+            return res.status(400).json({ error: "Full name must be at least 2 characters" });
+        }
+        if (username.length < 3 || username.length > 20) {
+            return res.status(400).json({ error: "Username must be 3-20 characters" });
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return res.status(400).json({ error: "Invalid email format" });
+        }
+        if (!/^\d{10}$/.test(phone)) {
+            return res.status(400).json({ error: "Phone number must be 10 digits" });
+        }
+        if (age < 1 || age > 120) {
+            return res.status(400).json({ error: "Invalid age" });
+        }
+        if (password.length < 6) {
+            return res.status(400).json({ error: "Password must be at least 6 characters" });
+        }
+
+        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+        if (existingUser) {
+            return res.status(400).json({ 
+                error: existingUser.email === email ? 
+                    "Email already exists" : 
+                    "Username already exists" 
+            });
+        }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ username, email, password: hashedPassword });
+        const newUser = new User({ 
+            fullName, 
+            username, 
+            email, 
+            phone, 
+            age, 
+            password: hashedPassword 
+        });
         await newUser.save();
 
-        // Store user in session
-        req.session.user = { id: newUser._id, username: newUser.username };
+        req.session.user = { 
+            id: newUser._id, 
+            username: newUser.username,
+            fullName: newUser.fullName 
+        };
         
-        res.status(201).json({ message: "Registration successful", user: req.session.user });
+        res.status(201).json({ 
+            message: "Registration successful", 
+            user: req.session.user 
+        });
     } catch (error) {
-        res.status(500).json({ message: "Server error", error });
+        console.error(error);
+        res.status(500).json({ error: "Server error" });
     }
 });
 
@@ -72,11 +112,21 @@ router.post("/login", async (req, res) => {
     }
 });
 
-// Logout & Destroy Session
+//logout
 router.post("/logout", (req, res) => {
+    console.log("Logout route hit"); // Debug log
+    if (!req.session) {
+        console.log("No session found");
+        return res.status(400).json({ message: "No active session" });
+    }
+
     req.session.destroy((err) => {
-        if (err) return res.status(500).json({ message: "Logout failed" });
-        res.clearCookie("connect.sid"); // Clear session cookie
+        if (err) {
+            console.error("Session destroy error:", err);
+            return res.status(500).json({ message: "Logout failed" });
+        }
+        res.clearCookie("connect.sid", { path: "/" }); // Ensure cookie is cleared
+        console.log("Session destroyed, cookie cleared");
         res.json({ message: "Logout successful" });
     });
 });

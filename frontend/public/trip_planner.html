@@ -1,44 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Travel Preferences</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
+        .container {
+            width: 75%;
+            margin-top: 7%;
+        }
+
+        .form-control {
+            height: 70px;
+            font-size: 20px;
+        }
+
         .option-card {
             cursor: pointer;
-            border: 2px solid #ddd;
+            border: 1px solid #ddd;
             border-radius: 10px;
-            padding: 15px;
-            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            text-align: left;
+            font-size: 18px;
+            width: 400px;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: left;
+            justify-content: center;
         }
+
         .option-card.selected {
             border-color: #007bff;
             background-color: #e7f1ff;
         }
+
+        .emoji {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
         .btn {
             background: darkorange;
-            color: #e7f1ff;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            margin-top: 4%;
         }
-        
-        .container{
-            margin-top: 7%;
+
+        h1 {
+            font-size: 50px;
+            background: linear-gradient(to right, black, darkorange);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
         }
-        
+
+        .form-label {
+            font-family: sans-serif;
+            font-size: 1.5rem;
+            margin-top: 3%;
+        }
+
+        p {
+            font-size: 23px;
+            margin-bottom: 5%;
+            color: grey;
+        }
+
+        .companions-card {
+            display: flex;
+            width: 350px;
+            height: 200px;
+            margin-top: 2%;
+        }
+       
     </style>
 </head>
+
 <body>
-    
+
     <div id="header-container"></div>
 
     <div class="container mt-10">
         <h1 class="mb-4">Tell us your travel preferences</h1>
+        <p>Just provide some basic information, and our trip plannner will generate a customized itinerary based on your
+            preferences</p>
         <form id="travelForm">
             <!-- Destination -->
             <div class="mb-3">
                 <label for="destination" class="form-label">What is your destination of choice?</label>
-                <input type="text" id="destination" name="destination" class="form-control" placeholder="e.g., Las Vegas, NV, USA" required>
+                <input type="text" id="destination" name="destination" class="form-control"
+                    placeholder="e.g., Las Vegas, NV, USA" required>
             </div>
             <!-- Trip Duration -->
             <div class="mb-3">
@@ -49,20 +106,37 @@
             <div class="mb-3">
                 <label class="form-label">What is Your Budget?</label>
                 <div class="d-flex gap-3">
-                    <div class="option-card budget-card" onclick="selectOption(this, 'budget', '💰 Cheap')">💰 Cheap <br> ₹1,000 - ₹3,000 per day</div>
-                    <div class="option-card budget-card" onclick="selectOption(this, 'budget', '💲 Moderate')">💲 Moderate <br> ₹3,000 - ₹10,000 per day</div>
-                    <div class="option-card budget-card" onclick="selectOption(this, 'budget', '💎 Luxury')">💎 Luxury <br>  ₹10,000+ per day</div>
+                    <div class="option-card budget-card" onclick="selectOption(this, 'budget', '💰 Cheap')">
+                        <span class="emoji">💰</span><strong>Cheap</strong> ₹1,000 - ₹3,000 per day
+                    </div>
+                    <div class="option-card budget-card" onclick="selectOption(this, 'budget', '💸 Moderate')">
+                        <span class="emoji">💸</span> <strong>Moderate</strong>₹3,000 - ₹10,000 per day
+                    </div>
+                    <div class="option-card budget-card" onclick="selectOption(this, 'budget', '💎 Luxury')">
+                        <span class="emoji">💎</span> <strong>Luxury</strong> ₹10,000+ per day
+                    </div>
                 </div>
                 <input type="hidden" id="budget" name="budget" required>
             </div>
             <!-- Travel Companions -->
             <div class="mb-3">
-                <label class="form-label">Who do you plan on traveling with?</label>
+                <label class="form-label">Who do you plan on traveling with on your next adventure?</label>
                 <div class="d-flex gap-3">
-                    <div class="option-card companions-card" onclick="selectOption(this, 'companions', '✈️ Just Me')">✈️ Just Me</div>
-                    <div class="option-card companions-card" onclick="selectOption(this, 'companions', '💑 A Couple')">💑 A Couple</div>
-                    <div class="option-card companions-card" onclick="selectOption(this, 'companions', '👨‍👩‍👧‍👦 Family')">👨‍👩‍👧‍👦 Family</div>
-                    <div class="option-card companions-card" onclick="selectOption(this, 'companions', '⛵ Friends')">⛵ Friends</div>
+                    <div class="option-card companions-card" onclick="selectOption(this, 'companions', '✈️ Just Me')">
+                        <span class="emoji">✈️</span> <strong>Just Me</strong> A solo traveller in exploration
+                    </div>
+                    <div class="option-card companions-card" onclick="selectOption(this, 'companions', '💑 A Couple')">
+                        <span class="emoji">💑</span> <strong>A Couple</strong>Two travellers in tandem
+                    </div>
+                    <div class="option-card companions-card"
+                        onclick="selectOption(this, 'companions', '👨‍👩‍👧‍👦 Family')">
+                        <span class="emoji">👨‍👩‍👧‍👦</span> <strong>Family</strong>A group of fun loving adventurers
+                    </div>
+                </div>
+                <div class="mb-3" >
+                    <div class="option-card companions-card" onclick="selectOption(this, 'companions', '⛵ Friends')">
+                        <span class="emoji">⛵</span> <strong>Friends</strong> A bunch of thrill-seekers
+                    </div>
                 </div>
                 <input type="hidden" id="companions" name="companions" required>
             </div>
@@ -71,57 +145,55 @@
     </div>
     <script>
         function selectOption(element, category, value) {
-    const cards = document.querySelectorAll(`.${category}-card`);
-    cards.forEach(card => card.classList.remove('selected'));
-    element.classList.add('selected');
-    document.getElementById(category).value = value;
-}
-
-document.getElementById('generateButton').addEventListener('click', async () => {
-    const form = document.getElementById('travelForm');
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-    }
-
-    const formData = {
-        destination: document.getElementById('destination').value,
-        duration: document.getElementById('duration').value,
-        budget: document.getElementById('budget').value,
-        companions: document.getElementById('companions').value
-    };
-
-    console.log('Sending data:', formData); // Add this to debug
-
-    try {
-        const response = await fetch('http://localhost:4000/api/generate-itinerary', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData),
-            credentials: "include"  // 🔥 Important for sessions
-
-        });
-
-        const data = await response.json();
-        if (data.success) {
-                sessionStorage.setItem('itineraryId', data.itineraryId);
-                window.location.href = '/result_trip.html';
-            } else {
-                throw new Error(data.error);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to generate itinerary: ' + error.message);
+            const cards = document.querySelectorAll(`.${category}-card`);
+            cards.forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById(category).value = value;
         }
-    });
+
+        document.getElementById('generateButton').addEventListener('click', async () => {
+            const form = document.getElementById('travelForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const formData = {
+                destination: document.getElementById('destination').value,
+                duration: document.getElementById('duration').value,
+                budget: document.getElementById('budget').value,
+                companions: document.getElementById('companions').value
+            };
+
+            console.log('Sending data:', formData);
+
+            try {
+                const response = await fetch('http://localhost:4000/api/generate-itinerary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                    credentials: "include"
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    sessionStorage.setItem('itineraryId', data.itineraryId);
+                    window.location.href = '/result_trip.html';
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to generate itinerary: ' + error.message);
+            }
+        });
     </script>
-    
-         <div id="footer"></div>
 
+    <div id="footer"></div>
 
-        <script src="header.js"></script>
-        <script src="footer.js"></script>
-
+    <script src="header.js"></script>
+    <script src="footer.js"></script>
 
 </body>
+
 </html>

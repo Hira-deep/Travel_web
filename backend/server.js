@@ -42,6 +42,10 @@ app.use(session({
     cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 day
   }));
   
+// Serve index.html at the root route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/public/login.html'));
+});
 
 // Serve static files from the frontend/public directory
 app.use(express.static(path.join(__dirname, '../frontend/public')));
@@ -53,10 +57,6 @@ app.use('/components', express.static(path.join(__dirname, "../frontend/componen
 //login and register database
 //app.use("/api/auth", authRoutes);
 
-// Serve index.html at the root route
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
-});
 
 // MongoDB connection
 const connectDB = async () => {
@@ -114,6 +114,14 @@ app.get('/register.html', (req, res) => {
 
 app.get('/result_trip.html', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/public/result_trip.html'));
+});
+
+app.get('/home.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/public/home.html'));
+});
+
+app.get('/home.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/public/header.html'));
 });
 
 // Start the server
