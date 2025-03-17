@@ -4,29 +4,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Bootstrap 5.3 (Latest version, removed conflicting imports) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <title>destination</title>
+    
+    <title>Destination</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Hero Section */
+        .tour {
+            height: 500px;
+            background: url('assets/desbg.jpg') no-repeat center center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            padding: 0 20px;
+        }
+
+        .tour::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .tour-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .tour-content h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: wheat;
+            margin-bottom: 10px;
+        }
+
+        .search-container {
+            margin-top: 30px;
+            position: relative;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            position: relative;
+            width: 100%;
+        }
+
+        #searchInput {
+            padding-left: 40px;
+            border-radius: 25px;
+            border: 1px solid darkorange;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            height: 50px;
+            font-size: 16px;
+        }
+
+        .location-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: darkorange;
+        }
+
+        #suggestionsList {
+            position: absolute;
+            width: 100%;
+            z-index: 1000;
+            border: 1px solid #ced4da;
+            border-radius: 0 0 25px 25px;
+            background-color: white;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Place Details */
+        #placeDetails {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .place-details-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        .place-details-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .place-details-card .card-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .place-details-card .card-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a3c34;
+        }
+
+        .place-details-card .price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #f28c38;
+        }
+
+        /* Nearby Places */
+        .nearby-places-section {
+            margin-top: 30px;
+        }
+
+        .nearby-places-section h3 {
+            font-size: 24px;
+            color: #1a3c34;
+            margin-bottom: 20px;
+        }
+
+        .overlay-text {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
+
     <div id="header-container"></div>
 
     <section class="tour">
         <div class="tour-content">
             <h1>Explore the World</h1>
+            <div class="overlay-text">Find your dream destination</div>
         </div>
     </section>
 
-
+    <!-- Search Bar -->
     <div class="container search-container">
-        <div class="col-lg-8">
+        <div class="col-lg-8 mx-auto">
             <div class="search-bar">
                 <i class="bi bi-geo-alt location-icon"></i>
-                <input type="text" id="searchInput" class="form-control" placeholder="Search a location..."
-                    onkeyup="getSuggestions()">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search a location..." onkeyup="getSuggestions()">
                 <ul id="suggestionsList" class="list-group"></ul>
             </div>
         </div>
@@ -38,11 +190,8 @@
             <img id="placeImage" src="" class="card-img-top img-fluid" alt="Place Image">
             <div class="card-body">
                 <h4 id="placeName" class="card-title"></h4>
-                <p class="card-text"><strong>Location:</strong> <span id="placeAddress"></span>, <span
-                        id="placeCountry"></span></p>
-                <p class="rating"><strong>Rating:</strong> <span id="placeRating"></span></p>
                 <p class="price">₹8000 / per person</p>
-                <button class="btn" onclick="navigateToBooking()">Book Now</button>
+                <button class="btn btn-warning" onclick="navigateToBooking()">Book Now</button>
             </div>
         </div>
     </div>
@@ -52,12 +201,12 @@
         <h3>Nearby Places</h3>
         <div id="nearbyPlaces" class="row"></div>
     </div>
-    </div>
+
     <script>
         window.onload = function () {
             const urlParams = new URLSearchParams(window.location.search);
             const searchQuery = urlParams.get("search");
-            const category = urlParams.get("category"); // Get category from URL
+            const category = urlParams.get("category");
 
             if (searchQuery) {
                 document.getElementById("searchInput").value = searchQuery;
@@ -65,11 +214,10 @@
             }
 
             if (category) {
-                document.getElementById("searchInput").value = category; // Pre-fill search
-                getSuggestions(category); // Trigger search for category
+                document.getElementById("searchInput").value = category;
+                getSuggestions(category);
             }
         };
-
 
         document.addEventListener("click", function (event) {
             const searchInput = document.getElementById("searchInput");
@@ -83,36 +231,24 @@
         function navigateToBooking() {
             const placeName = document.getElementById("placeName").textContent;
             const placeImage = document.getElementById("placeImage").src;
-            const placeAddress = document.getElementById("placeAddress").textContent;
-            const placeCountry = document.getElementById("placeCountry").textContent;
-            const placeRating = document.getElementById("placeRating").textContent;
-
-            // Encode the data in the URL as query parameters
+            
             const queryParams = new URLSearchParams({
                 placeName: placeName,
                 placeImage: placeImage,
-                placeAddress: placeAddress,
-                placeCountry: placeCountry,
-                placeRating: placeRating,
-                price: "8000" // Fixed price
+                price: "8000"
             }).toString();
 
-            // Navigate to the booking page with query parameters
             window.location.href = `booking.html?${queryParams}`;
         }
     </script>
 
     <div id="footer"></div>
 
-
     <script src="header.js"></script>
     <script src="searchbar.js"></script>
     <script src="footer.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
-
 </html>
