@@ -1,0 +1,40 @@
+body {
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+}
+
+.card {
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    color: #1a3c34;
+    font-weight: bold;
+}
+
+.form-control {
+    border-radius: 10px;
+}
+
+.btn-primary {
+    background-color: #f28c38;
+    border: none;
+    padding: 10px;
+}
+
+.btn-primary:hover {
+    background-color: #e67e22;
+}
+
+#paymentMessage {
+    font-size: 16px;
+}
+
+#paymentMessage.success {
+    color: green;
+}
+
+#paymentMessage.error {
+    color: red;
+}

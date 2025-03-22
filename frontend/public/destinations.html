@@ -66,7 +66,7 @@
         window.onload = function () {
             const urlParams = new URLSearchParams(window.location.search);
             const searchQuery = urlParams.get("search");
-            selectedCategory = urlParams.get("category") || "Restaurants"; // Default to Restaurants
+            selectedCategory = urlParams.get("category") || "Locations"; // Default to Restaurants
 
             if (searchQuery) {
                 document.getElementById("searchInput").value = searchQuery;

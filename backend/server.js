@@ -16,6 +16,7 @@ const PORT = process.env.PORT || 4000;
 const authRoutes = require("./routes/authRoutes");
 const bookingRoutes = require("./routes/bookings");
 const itineraryRoutes = require("./routes/itineraryRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 
 // Middleware to parse JSON data
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -65,6 +66,7 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api", itineraryRoutes);
+app.use("/api", paymentRoutes);
 
 // Serve Static Files
 app.use(express.static(path.join(__dirname, '../frontend/public')));

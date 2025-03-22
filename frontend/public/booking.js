@@ -7,7 +7,7 @@ const placeImage = urlParams.get("placeImage");
 const placeAddress = urlParams.get("placeAddress");
 const placeCountry = urlParams.get("placeCountry");
 const placeRating = urlParams.get("placeRating");
-const price = urlParams.get("price");
+const price = urlParams.get("price") || 8000; // Default to ₹8000 if not provided
 
 // Populate place details
 document.getElementById("placeName").textContent = placeName;
@@ -18,7 +18,12 @@ document.getElementById("placeRating").textContent = placeRating;
 document.getElementById("placePrice").textContent = price;
 document.getElementById("basePrice").textContent = `₹${price}`;
 document.getElementById("totalBasePrice").textContent = `₹${price}`;
-document.getElementById("totalPrice").textContent = `₹${parseInt(price) + 150}`; // Add ₹150 service charge
+
+// GST calculation (18% of base price)
+const gstRate = 0.18;
+const gstAmount = Math.round(price * gstRate); // ₹1440 for ₹8000
+document.getElementById("gstAmount").textContent = `₹${gstAmount}`;
+document.getElementById("totalPrice").textContent = `₹${parseInt(price) + gstAmount}`;
 
 // Set minimum date (2 days from current date)
 const currentDate = new Date(); // Current date: March 22, 2025
@@ -34,7 +39,8 @@ document.getElementById("guests").addEventListener("input", function() {
     const guests = parseInt(this.value) || 1;
     const basePrice = parseInt(price);
     const totalBase = basePrice * guests;
-    const total = totalBase + 150; // Add ₹150 service charge
+    const totalGst = gstAmount * guests; // GST scales with guests
+    const total = totalBase + totalGst;
     document.getElementById("totalBasePrice").textContent = `₹${totalBase}`;
     document.getElementById("totalPrice").textContent = `₹${total}`;
 });
@@ -66,9 +72,10 @@ document.getElementById("bookingForm").addEventListener("submit", async function
             credentials: "include" // Include cookies for session
         });
 
+        const result = await response.json();
         if (response.ok) {
-            alert("Booking successfully recorded!");
-            window.location.href = "/home.html"; // Redirect to homepage
+            alert("Booking successfully recorded! Proceeding to payment...");
+            window.location.href = `/payment.html?bookingId=${result.bookingId}`; // Redirect to payment
         } else {
             alert("Error recording booking. Please try again.");
         }
