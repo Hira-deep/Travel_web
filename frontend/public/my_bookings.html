@@ -16,7 +16,6 @@
             padding: 20px;
             background: white;
             border-radius: 10px;
-           
         }
 
         .booking-card {
@@ -88,9 +87,9 @@
             color: red;
             margin: 10px 0;
         }
-        h2{
+        h2 {
             text-align: center;
-            color:darkorange;
+            color: darkorange;
         }
     </style>
 </head>
@@ -107,7 +106,7 @@
             <h3>Update Booking</h3>
             <form id="updateForm">
                 <input type="hidden" id="bookingId">
-                <input type="text" id="updatePlaceName" placeholder="Place Name" required>
+                <input type="text" id="updatePlaceName" placeholder="Place Name" readonly required>
                 <input type="text" id="updateFullName" placeholder="Full Name" required>
                 <input type="text" id="updatePhone" placeholder="Phone" required>
                 <input type="date" id="updateDate" required>
@@ -121,6 +120,12 @@
     <div id="footer"></div>
 
     <script>
+        // Set minimum date (2 days from current date)
+        const currentDate = new Date(); // Current date: March 22, 2025
+        const minDate = new Date(currentDate);
+        minDate.setDate(currentDate.getDate() + 2); // Add 2 days: March 24, 2025
+        const minDateString = minDate.toISOString().split("T")[0];
+
         async function loadBookings() {
             try {
                 const response = await fetch('http://localhost:4000/api/bookings');
@@ -139,8 +144,8 @@
                         <p><strong>Guests:</strong> ${booking.guests}</p>
                         <p><strong>Total Price:</strong> ₹${booking.totalPrice}</p>
                         <div class="booking-actions">
-                            <button onclick="showUpdatePopup('${booking._id}')">Update</button>
-                            <button onclick="deleteBooking('${booking._id}')" style="background: red;">Delete</button>
+                            <button onclick="showUpdatePopup('${booking._id}')">Update booking</button>
+                            <button onclick="deleteBooking('${booking._id}')" style="background: red;">Cancel booking</button>
                         </div>
                     `;
                     container.appendChild(card);
@@ -163,6 +168,9 @@
                 document.getElementById('updateGuests').value = booking.guests;
                 document.getElementById('updateTotalPrice').value = booking.totalPrice;
 
+                // Set the minimum date for the date input
+                document.getElementById('updateDate').setAttribute('min', minDateString);
+
                 document.getElementById('updatePopup').style.display = 'block';
             } catch (error) {
                 console.error('Error fetching booking:', error);
@@ -177,14 +185,20 @@
         function calculateTotalPrice() {
             const guests = parseInt(document.getElementById('updateGuests').value) || 0;
             const pricePerGuest = 8000;  // Change this value as per your pricing
-            document.getElementById('updateTotalPrice').value = guests * pricePerGuest;
+            document.getElementById('updateTotalPrice').value = guests * pricePerGuest + 150; // Adding ₹150 service charge
         }
 
         document.getElementById('updateForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
+            const selectedDate = new Date(document.getElementById('updateDate').value);
+            if (selectedDate < minDate) {
+                document.getElementById('updateError').textContent = 'Please select a date at least 2 days from today.';
+                return;
+            }
+
             const updatedBooking = {
-                placeName: document.getElementById('updatePlaceName').value,
+                // placeName is not included here since it should not be updated
                 fullName: document.getElementById('updateFullName').value,
                 phone: document.getElementById('updatePhone').value,
                 date: document.getElementById('updateDate').value,
@@ -225,8 +239,7 @@
 
         loadBookings();
     </script>
-     <script src="header.js"></script>
-     <script src="footer.js"></script>
-
+    <script src="header.js"></script>
+    <script src="footer.js"></script>
 </body>
 </html>

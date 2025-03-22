@@ -2,20 +2,18 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const axios = require("axios");
 require("dotenv").config();
-const path = require('path');
+const path = require("path");
 
 const User = require("../models/user");
 const Location = require("../models/location");
 
 const router = express.Router();
 
-
 // Load API keys
 const GEOAPIFY_AUTOCOMPLETE_KEY = process.env.GEOAPIFY_AUTOCOMPLETE_KEY;
 const GEOAPIFY_PLACES_DETAILS_KEY = process.env.GEOAPIFY_PLACES_DETAILS_KEY;
 const GEOAPIFY_PLACES_KEY = process.env.GEOAPIFY_PLACES_KEY;
 const PIXABAY_API_KEY = process.env.PIXABAY_API_KEY;
-
 
 // Middleware: Check if User is Authenticated
 const authenticateSession = (req, res, next) => {
@@ -24,9 +22,6 @@ const authenticateSession = (req, res, next) => {
     }
     next();
 };
-
-
-
 
 // Register & Start Session
 router.post("/register", async (req, res) => {
@@ -55,33 +50,31 @@ router.post("/register", async (req, res) => {
 
         const existingUser = await User.findOne({ $or: [{ email }, { username }] });
         if (existingUser) {
-            return res.status(400).json({ 
-                error: existingUser.email === email ? 
-                    "Email already exists" : 
-                    "Username already exists" 
+            return res.status(400).json({
+                error: existingUser.email === email ? "Email already exists" : "Username already exists"
             });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ 
-            fullName, 
-            username, 
-            email, 
-            phone, 
-            age, 
-            password: hashedPassword 
+        const newUser = new User({
+            fullName,
+            username,
+            email,
+            phone,
+            age,
+            password: hashedPassword
         });
         await newUser.save();
 
-        req.session.user = { 
-            id: newUser._id, 
+        req.session.user = {
+            id: newUser._id,
             username: newUser.username,
-            fullName: newUser.fullName 
+            fullName: newUser.fullName
         };
-        
-        res.status(201).json({ 
-            message: "Registration successful", 
-            user: req.session.user 
+
+        res.status(201).json({
+            message: "Registration successful",
+            user: req.session.user
         });
     } catch (error) {
         console.error(error);
@@ -100,11 +93,8 @@ router.post("/login", async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-        // Store user in session
         req.session.user = { id: user._id, username: user.username };
-        
-        console.log("Session after login:", req.session.user); // Debugging session
-
+        console.log("Session after login:", req.session.user);
 
         res.status(200).json({ message: "Login successful", user: req.session.user });
     } catch (error) {
@@ -112,9 +102,9 @@ router.post("/login", async (req, res) => {
     }
 });
 
-//logout
+// Logout
 router.post("/logout", (req, res) => {
-    console.log("Logout route hit"); // Debug log
+    console.log("Logout route hit");
     if (!req.session) {
         console.log("No session found");
         return res.status(400).json({ message: "No active session" });
@@ -125,7 +115,7 @@ router.post("/logout", (req, res) => {
             console.error("Session destroy error:", err);
             return res.status(500).json({ message: "Logout failed" });
         }
-        res.clearCookie("connect.sid", { path: "/" }); // Ensure cookie is cleared
+        res.clearCookie("connect.sid", { path: "/" });
         console.log("Session destroyed, cookie cleared");
         res.json({ message: "Logout successful" });
     });
@@ -147,11 +137,9 @@ router.get("/profile", async (req, res) => {
     }
 });
 
-
-
-
+// Session Debug Routes
 router.get("/session-debug", (req, res) => {
-    console.log("Session Debug:", req.session);  // Debugging session data
+    console.log("Session Debug:", req.session);
     res.json({ session: req.session });
 });
 
@@ -163,17 +151,29 @@ router.get("/session", (req, res) => {
     }
 });
 
-
-
-
 // Autocomplete Search API
 router.get("/autocomplete", async (req, res) => {
     try {
-        const { q } = req.query;
-        const response = await axios.get(
-            `https://api.geoapify.com/v1/geocode/autocomplete?text=${q}&apiKey=${GEOAPIFY_AUTOCOMPLETE_KEY}`
-        );
+        const { q, category, lat, lon } = req.query;
 
+        // Map frontend categories to Geoapify categories
+        const categoryMap = {
+            "Restaurants": "catering.restaurant",
+            "Hotels": "accommodation.hotel",
+            "Cafe": "catering.cafe"
+        };
+
+        const geoapifyCategory = categoryMap[category] || "";
+        let apiUrl = `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(q)}&apiKey=${GEOAPIFY_AUTOCOMPLETE_KEY}`;
+
+        if (geoapifyCategory) {
+            apiUrl += `&filter=category:${geoapifyCategory}`;
+        }
+        if (lat && lon) {
+            apiUrl += `&filter=circle:${lon},${lat},5000`; // 5km radius
+        }
+
+        const response = await axios.get(apiUrl);
         res.json(response.data);
     } catch (error) {
         console.error("Error fetching autocomplete:", error.message);
@@ -187,7 +187,6 @@ router.get("/place-details", async (req, res) => {
         const { place_id } = req.query;
         if (!place_id) return res.status(400).json({ error: "Missing place_id parameter" });
 
-        // Fetch Place Details from Geoapify
         const placeResponse = await axios.get(
             `https://api.geoapify.com/v2/place-details?id=${place_id}&apiKey=${GEOAPIFY_PLACES_DETAILS_KEY}`
         );
@@ -200,7 +199,6 @@ router.get("/place-details", async (req, res) => {
         const details = placeDetails.features[0].properties;
         const placeName = details.name || details.address_line1 || "Unknown Place";
 
-        // Fetch Wikipedia Image
         let imageUrl = await getPlaceImage(placeName);
 
         res.json({
@@ -209,7 +207,7 @@ router.get("/place-details", async (req, res) => {
             address: details.address_line2 || "N/A",
             country: details.country || "N/A",
             rating: details.rank?.confidence || "No Rating",
-            image_url: imageUrl || "../photo/default1.jpg",
+            image_url: imageUrl || "../assets/default.jpg" // Match frontend default
         });
     } catch (error) {
         console.error("Error fetching place details:", error.message);
@@ -248,7 +246,7 @@ async function getPlaceImage(placeName) {
 
         // 2️⃣ Fetch from Pixabay (if Wikipedia fails)
         const pixabayResponse = await axios.get(
-            `https://pixabay.com/api/?key=${process.env.PIXABAY_API_KEY}&q=${encodeURIComponent(placeName)}&image_type=photo&per_page=1`
+            `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(placeName)}&image_type=photo&per_page=1`
         );
 
         if (pixabayResponse.data.hits && pixabayResponse.data.hits.length > 0) {
@@ -258,22 +256,33 @@ async function getPlaceImage(placeName) {
         console.error(`Image Fetch Failed for ${placeName}:`, error.message);
     }
 
-    // 3️⃣ Default image (if both APIs fail)
-    return "../photo/default1.jpg";
+    return "../assets/default.jpg"; // Match frontend default
 }
-
-
 
 // Fetch 10 Nearby Places for a Selected Location
 router.get("/nearby-places", async (req, res) => {
     try {
-        const { lat, lon } = req.query;
+        const { lat, lon, category } = req.query;
         if (!lat || !lon) return res.status(400).json({ error: "Latitude and longitude are required" });
 
-        const response = await axios.get(
-            `https://api.geoapify.com/v2/places?categories=commercial,leisure,tourism,catering,accommodation&filter=circle:${lon},${lat},5000&limit=10&apiKey=${GEOAPIFY_PLACES_KEY}`
-        );
+        // Map frontend categories to Geoapify categories
+        const categoryMap = {
+            "Restaurants": "catering.restaurant",
+            "Hotels": "accommodation.hotel",
+            "Cafe": "catering.cafe"
+        };
 
+        const geoapifyCategory = categoryMap[category] || "";
+        let apiUrl = `https://api.geoapify.com/v2/places?filter=circle:${lon},${lat},5000&limit=10&apiKey=${GEOAPIFY_PLACES_KEY}`;
+
+        if (geoapifyCategory) {
+            apiUrl += `&categories=${geoapifyCategory}`;
+        } else {
+            // Default categories if none specified
+            apiUrl += `&categories=commercial,leisure,tourism,catering,accommodation`;
+        }
+
+        const response = await axios.get(apiUrl);
         res.json(response.data);
     } catch (error) {
         console.error("Error fetching nearby places:", error.message);

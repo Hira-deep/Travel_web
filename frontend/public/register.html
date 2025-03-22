@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,15 +7,12 @@
     <link rel="stylesheet" href="login.css">
     <title>Register</title>
 </head>
-
 <body>
-
     <section class="login-section">
         <div class="login-container">
             <div class="login-image">
                 <img src="assets/register.png" alt="Register Image" />
             </div>
-
             <div class="login-form">
                 <div class="user-icon">
                     <img src="assets/user.png" alt="User Icon" />
@@ -24,31 +20,32 @@
                 <h2>Register</h2>
                 <form id="registerForm">
                     <div class="form-group">
-                        <input type="text" placeholder="Full Name" required id="fullName" name="fullName" /><br>
-                        <span class="error-message">Full name must be at least 2 characters</span>
+                        <input type="text" placeholder="Full Name" id="fullName" name="fullName" />
+                        <span class="error-message" id="fullNameError"></span>
                     </div>
                     <div class="form-group">
-                        <input type="text" placeholder="Username" required id="username" name="username" /><br>
-                        <span class="error-message">Username must be 3-20 characters</span>
+                        <input type="text" placeholder="Username" id="username" name="username" />
+                        <span class="error-message" id="usernameError"></span>
                     </div>
                     <div class="form-group">
-                        <input type="email" placeholder="Email" required id="email" name="email" /><br>
-                        <span class="error-message">Please enter a valid email</span>
+                        <input type="email" placeholder="Email" id="email" name="email" />
+                        <span class="error-message" id="emailError"></span>
                     </div>
                     <div class="form-group">
-                        <input type="password" placeholder="Password" required id="password" name="password" /><br>
-                        <span class="error-message">Password must be at least 6 characters</span>
+                        <input type="password" placeholder="Password" id="password" name="password" />
+                        <span class="error-message" id="passwordError"></span>
                     </div>
                     <div class="form-group">
-                        <input type="tel" placeholder="Phone Number" required id="phone" name="phone" /><br>
-                        <span class="error-message">Please enter a valid 10-digit phone number</span>
+                        <input type="tel" placeholder="Phone Number" id="phone" name="phone" />
+                        <span class="error-message" id="phoneError"></span>
                     </div>
                     <div class="form-group">
-                        <input type="number" placeholder="Age" required id="age" name="age" min="1" max="120" /><br>
-                        <span class="error-message">Age must be between 1 and 120</span>
+                        <input type="number" placeholder="Age" id="age" name="age" min="1" max="120" />
+                        <span class="error-message" id="ageError"></span>
                     </div>
-                    <button type="submit" class="btn auth-btn">Create</button>
-                </form>
+                    <button type="submit" class="btn auth-btn" id="registerBtn">Create</button>
+                    <div id="registerMessage" class="message"></div>
+                </form><br>
                 <p>Already have an account? <a href="/login.html">Login</a></p>
             </div>
         </div>
@@ -58,48 +55,32 @@
         document.getElementById("registerForm").addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            let isValid = true;
-
-            function validateInput(input, condition, message) {
-                let errorMessage = input.parentElement.querySelector(".error-message"); // Ensure correct selection
-                if (!condition) {
-                    input.classList.add("error");
-                    errorMessage.textContent = message;
-                    errorMessage.style.display = "block";
-                    isValid = false;
-                } else {
-                    input.classList.remove("error");
-                    errorMessage.textContent = ""; // Clear message when valid
-                    errorMessage.style.display = "none";
-                }
+            if (!validateForm()) {
+                return; // Stop if validation fails
             }
 
-            // Get input fields
-            const fullName = document.getElementById("fullName");
-            const username = document.getElementById("username");
-            const email = document.getElementById("email");
-            const password = document.getElementById("password");
-            const phone = document.getElementById("phone");
-            const age = document.getElementById("age");
+            const fullName = document.getElementById("fullName").value;
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const phone = document.getElementById("phone").value;
+            const age = document.getElementById("age").value;
+            const registerBtn = document.getElementById("registerBtn");
+            const registerMessage = document.getElementById("registerMessage");
 
-            // Validate each field
-            validateInput(fullName, fullName.value.trim().length >= 2, "Full name must be at least 2 characters");
-            validateInput(username, username.value.trim().length >= 3 && username.value.length <= 20, "Username must be 3-20 characters");
-            validateInput(email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()), "Please enter a valid email");
-            validateInput(password, password.value.length >= 6, "Password must be at least 6 characters");
-            validateInput(phone, /^\d{10}$/.test(phone.value.trim()), "Please enter a valid 10-digit phone number");
-            validateInput(age, age.value >= 1 && age.value <= 120, "Age must be between 1 and 120");
+            // Show loading state
+            registerBtn.disabled = true;
+            registerBtn.textContent = "Registering...";
+            registerMessage.textContent = "";
+            registerMessage.className = "message";
 
-            if (!isValid) return; // Stop if validation fails
-
-            // Proceed with form submission
             const formData = {
-                fullName: fullName.value,
-                username: username.value,
-                email: email.value,
-                phone: phone.value,
-                age: parseInt(age.value),
-                password: password.value
+                fullName,
+                username,
+                email,
+                phone,
+                age: parseInt(age),
+                password
             };
 
             try {
@@ -113,18 +94,112 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert("Registration successful!");
-                    window.location.href = "/home.html";
+                    registerMessage.textContent = "Registration successful! Redirecting...";
+                    registerMessage.className = "message success";
+                    setTimeout(() => {
+                        window.location.href = "/home.html";
+                    }, 1500);
                 } else {
-                    alert(data.error || "Registration failed. Try again.");
+                    registerMessage.textContent = data.error || "Registration failed. Please try again.";
+                    registerMessage.className = "message error";
+                    registerBtn.disabled = false;
+                    registerBtn.textContent = "Create";
                 }
             } catch (error) {
                 console.error("Error:", error);
-                alert("An error occurred. Please try again.");
+                registerMessage.textContent = "An error occurred. Please try again.";
+                registerMessage.className = "message error";
+                registerBtn.disabled = false;
+                registerBtn.textContent = "Create";
             }
         });
-    </script>
-   
-</body>
 
+        function validateForm() {
+            const fullName = document.getElementById("fullName");
+            const username = document.getElementById("username");
+            const email = document.getElementById("email");
+            const password = document.getElementById("password");
+            const phone = document.getElementById("phone");
+            const age = document.getElementById("age");
+            let isValid = true;
+
+            // Clear previous error messages
+            const errors = {
+                fullNameError: document.getElementById("fullNameError"),
+                usernameError: document.getElementById("usernameError"),
+                emailError: document.getElementById("emailError"),
+                passwordError: document.getElementById("passwordError"),
+                phoneError: document.getElementById("phoneError"),
+                ageError: document.getElementById("ageError")
+            };
+            Object.values(errors).forEach(error => {
+                error.textContent = "";
+                error.style.visibility = "hidden";
+            });
+
+            // Validate each field
+            if (!fullName.value.trim()) {
+                errors.fullNameError.textContent = "Full name is required";
+                errors.fullNameError.style.visibility = "visible";
+                isValid = false;
+            } else if (fullName.value.trim().length < 2) {
+                errors.fullNameError.textContent = "Full name must be at least 2 characters";
+                errors.fullNameError.style.visibility = "visible";
+                isValid = false;
+            }
+
+            if (!username.value.trim()) {
+                errors.usernameError.textContent = "Username is required";
+                errors.usernameError.style.visibility = "visible";
+                isValid = false;
+            } else if (username.value.trim().length < 3 || username.value.length > 20) {
+                errors.usernameError.textContent = "Username must be 3-20 characters";
+                errors.usernameError.style.visibility = "visible";
+                isValid = false;
+            }
+
+            if (!email.value.trim()) {
+                errors.emailError.textContent = "Email is required";
+                errors.emailError.style.visibility = "visible";
+                isValid = false;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+                errors.emailError.textContent = "Please enter a valid email";
+                errors.emailError.style.visibility = "visible";
+                isValid = false;
+            }
+
+            if (!password.value.trim()) {
+                errors.passwordError.textContent = "Password is required";
+                errors.passwordError.style.visibility = "visible";
+                isValid = false;
+            } else if (password.value.length < 6) {
+                errors.passwordError.textContent = "Password must be at least 6 characters";
+                errors.passwordError.style.visibility = "visible";
+                isValid = false;
+            }
+
+            if (!phone.value.trim()) {
+                errors.phoneError.textContent = "Phone number is required";
+                errors.phoneError.style.visibility = "visible";
+                isValid = false;
+            } else if (!/^\d{10}$/.test(phone.value.trim())) {
+                errors.phoneError.textContent = "Please enter a valid 10-digit phone number";
+                errors.phoneError.style.visibility = "visible";
+                isValid = false;
+            }
+
+            if (!age.value.trim()) {
+                errors.ageError.textContent = "Age is required";
+                errors.ageError.style.visibility = "visible";
+                isValid = false;
+            } else if (age.value < 1 || age.value > 120) {
+                errors.ageError.textContent = "Age must be between 1 and 120";
+                errors.ageError.style.visibility = "visible";
+                isValid = false;
+            }
+
+            return isValid;
+        }
+    </script>
+</body>
 </html>

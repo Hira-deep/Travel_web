@@ -7,8 +7,8 @@
 
 body {
   font-family: Arial, sans-serif;
-  background-color: white ;
-} 
+  background-color: white;
+}
 
 /* Login Section */
 .login-section {
@@ -21,7 +21,6 @@ body {
 
 .login-container {
   display: flex;
-  box-shadow: #333;
   max-width: 1000px;
   width: 100%;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
@@ -67,7 +66,8 @@ h2 {
 
 .form-group {
   margin-bottom: 15px;
-  position: relative; /* Ensure error message aligns with input */
+  position: relative;
+  width: 100%; /* Ensure full width for proper alignment */
 }
 
 .form-group input {
@@ -98,5 +98,32 @@ h2 {
   color: red;
   font-size: 0.9em;
   margin-top: 5px;
-  visibility: hidden;
+  visibility: hidden; /* Changed from display to visibility */
+  display: block; /* Added to maintain space and prevent layout shift */
+}
+
+.btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.message {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 1rem;
+  display: none;
+}
+
+.message.success {
+  background-color: #d4edda;
+  color: #155724;
+  display: block;
+}
+
+.message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  display: block;
 }

@@ -82,13 +82,13 @@ router.get('/itineraries', async (req, res) => {
 
 // AI-based itinerary generator function
 async function generateItinerary(destination, duration, budget, companions) {
-    const prompt = `Generate a detailed travel itinerary for a ${duration}-day trip to ${destination} with a ${budget} budget, traveling with ${companions}. Include daily activities, accommodation suggestions, and dining options.`;
+    const prompt = `Generate a detailed travel itinerary for a ${duration}-day trip to ${destination} with a ${budget} budget, traveling with ${companions}. Include daily activities, accommodation suggestions, and dining options.From morning to evening in bullet points place by place`;
 
     let retries = 3;
     while (retries > 0) {
         try {
             const response = await axios.post(
-                "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
+                "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1",
                 { inputs: prompt, parameters: { max_length: 1000, temperature: 0.7 } },
                 { headers: { Authorization: `Bearer ${process.env.HUGGING_FACE_API_KEY}`, "Content-Type": "application/json" } }
             );

@@ -5,13 +5,17 @@ async function getSuggestions() {
     const query = document.getElementById("searchInput").value;
     const suggestionsList = document.getElementById("suggestionsList");
 
-    if (query.length < 3) {
+    if (query.length < 2) { // Adjusted to 2 for consistency with earlier code
         suggestionsList.innerHTML = ""; // Clear if query is too short
         return;
     }
 
     try {
-        const response = await fetch(`${apiUrl}/autocomplete?q=${query}`);
+        // Use window.selectedCategory from destinations.html
+        const response = await fetch(`${apiUrl}/autocomplete?q=${encodeURIComponent(query)}&category=${encodeURIComponent(window.selectedCategory)}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
         const data = await response.json();
 
         suggestionsList.innerHTML = ""; // Clear previous results
@@ -22,13 +26,13 @@ async function getSuggestions() {
                 const listItem = document.createElement("li");
                 listItem.classList.add("list-group-item", "list-group-item-action");
                 listItem.textContent = feature.properties.formatted;
+                // Use geometry.coordinates for lat/lon to align with Geoapify
                 listItem.onclick = () => selectLocation(
                     feature.properties.place_id,
                     feature.properties.formatted,
-                    feature.properties.lat,
-                    feature.properties.lon
+                    feature.geometry.coordinates[1], // Latitude
+                    feature.geometry.coordinates[0]  // Longitude
                 );
-
                 suggestionsList.appendChild(listItem);
             });
         } else {
@@ -36,6 +40,7 @@ async function getSuggestions() {
         }
     } catch (error) {
         console.error("❌ Error fetching suggestions:", error);
+        suggestionsList.innerHTML = `<li class="list-group-item">Error loading suggestions</li>`;
     }
 }
 
@@ -52,7 +57,7 @@ async function selectLocation(placeId, placeName, lat, lon) {
                 address: data.address || "N/A",
                 country: data.country || "N/A",
                 rating: data.rating || "No Rating",
-                image_url: data.image_url || "../assets/default.jpg", // Placeholder image if none provided
+                image_url: data.image_url || "../assets/default.jpg", // Keep your default image
             };
 
             // Save to database
@@ -83,12 +88,14 @@ async function selectLocation(placeId, placeName, lat, lon) {
 // Function: Fetch 10 Nearby Places
 async function fetchNearbyPlaces(lat, lon) {
     try {
-        const response = await fetch(`${apiUrl}/nearby-places?lat=${lat}&lon=${lon}`);
+        // Include category in nearby places fetch
+        const response = await fetch(`${apiUrl}/nearby-places?lat=${lat}&lon=${lon}&category=${encodeURIComponent(window.selectedCategory)}`);
         const data = await response.json();
 
         displayNearbyPlaces(data);
     } catch (error) {
         console.error("❌ Error fetching nearby places:", error);
+        document.getElementById("nearbyPlaces").innerHTML = "<p>Error loading nearby places.</p>";
     }
 }
 
@@ -102,26 +109,26 @@ function displayNearbyPlaces(data) {
         return;
     }
 
-    // Limit to 10 places to match the 3-3-3-1 layout
+    // Limit to 10 places
     const places = data.features.slice(0, 10);
 
     places.forEach((place) => {
         const placeCard = document.createElement("div");
-        placeCard.classList.add("col-md-4");
+        placeCard.classList.add("col"); // Adjusted to match your row-cols-md-3
         placeCard.innerHTML = `
             <div class="place-card">
-                <img src="${place.image_url || "../assets/default.jpg"}" class="card-img-top img-fluid" alt="${place.properties.name || "Unknown Place"}">
+                <img src="${place.image_url || '../assets/default.jpg'}" class="card-img-top img-fluid" alt="${place.properties.name || 'Unknown Place'}">
                 <div class="card-body">
-                    <h4 class="card-title">${place.properties.name || "Unknown Place"}</h4>
-                    <p class="card-text">${place.properties.address_line2 || "N/A"}</p>
-                    <p class="rating">${place.properties.rank?.confidence || "Not Rated"}</p>
-                    <p class="price">$8000 / per person</p>
-                    <button class="btn book-now-btn" 
-                        data-name="${place.properties.name || 'Unknown'}" 
+                    <h4 class="card-title">${place.properties.name || place.properties.formatted.split(',')[0]}</h4>
+                    <p class="card-text">${place.properties.address_line2 || place.properties.formatted || 'N/A'}</p>
+                    <p class="rating">${place.properties.rank?.confidence || place.properties.rating || 'Not Rated'}</p>
+                    <p class="price">₹8000 / per person</p>
+                    <button class="btn btn-warning book-now-btn" 
+                        data-name="${place.properties.name || place.properties.formatted.split(',')[0]}" 
                         data-image="${place.image_url || '../assets/default.jpg'}" 
-                        data-address="${place.properties.address_line2 || 'N/A'}"
+                        data-address="${place.properties.address_line2 || place.properties.formatted || 'N/A'}"
                         data-country="${place.properties.country || 'N/A'}"
-                        data-rating="${place.properties.rank?.confidence || 'No Rating'}">
+                        data-rating="${place.properties.rank?.confidence || place.properties.rating || 'No Rating'}">
                         Book Now
                     </button>
                 </div>
@@ -152,13 +159,3 @@ function displayNearbyPlaces(data) {
         });
     });
 }
-
-// Hide dropdown when clicking outside
-document.addEventListener("click", function (event) {
-    const searchInput = document.getElementById("searchInput");
-    const suggestionsList = document.getElementById("suggestionsList");
-
-    if (!searchInput.contains(event.target) && !suggestionsList.contains(event.target)) {
-        suggestionsList.style.display = "none"; // Hide dropdown
-    }
-});

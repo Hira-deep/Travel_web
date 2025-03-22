@@ -1,38 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="login.css">
     <title>Login</title>
 </head>
-
 <body>
-
-
     <section class="login-section">
         <div class="login-container">
             <div class="login-image">
                 <img src="assets/login.png" alt="Login Image" />
             </div>
-
             <div class="login-form">
                 <div class="user-icon">
-                    <img src="assets/user.png" alt="User  Icon" />
+                    <img src="assets/user.png" alt="User Icon" />
                 </div>
                 <h2>Login</h2>
                 <form id="loginForm">
                     <div class="form-group">
-                        <input type="email" placeholder="Email" required id="email" name="email" />
+                        <input type="text" placeholder="Email"  id="email" name="email" />
                         <span class="error-message" id="emailError"></span>
                     </div>
                     <div class="form-group">
-                        <input type="password" placeholder="Password" required id="password" name="password" />
+                        <input type="password" placeholder="Password" id="password" name="password" />
                         <span class="error-message" id="passwordError"></span>
                     </div>
-                    <button type="submit" class="btn auth-btn">Login</button>
-                </form>
+                    <button type="submit" class="btn auth-btn" id="loginBtn">Login</button>
+                    <div id="loginMessage" class="message"></div> <!-- Message below button -->
+                </form><br>
                 <p>Don't have an account? <a href="/register.html">Create</a></p>
             </div>
         </div>
@@ -48,26 +44,43 @@
 
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
+            const loginBtn = document.getElementById("loginBtn");
+            const loginMessage = document.getElementById("loginMessage");
+
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtn.textContent = "Logging in...";
+            loginMessage.textContent = "";
+            loginMessage.className = "message";
 
             try {
                 const response = await fetch("http://localhost:4000/api/auth/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email, password }),
-                    credentials: "include", // Allow session handling
+                    credentials: "include",
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert("Login successful!");
-                    window.location.href = "/home.html"; // Redirect on success
+                    loginMessage.textContent = "Login successful! Redirecting...";
+                    loginMessage.className = "message success";
+                    setTimeout(() => {
+                        window.location.href = "/home.html";
+                    }, 1500); // Redirect after 1.5 seconds
                 } else {
-                    alert(data.error || "Login failed. Please try again.");
+                    loginMessage.textContent = data.error || "Login failed. Please try again.";
+                    loginMessage.className = "message error";
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = "Login";
                 }
             } catch (error) {
                 console.error("Error:", error);
-                alert("An error occurred. Please try again.");
+                loginMessage.textContent = "An error occurred. Please try again.";
+                loginMessage.className = "message error";
+                loginBtn.disabled = false;
+                loginBtn.textContent = "Login";
             }
         });
 
@@ -77,32 +90,37 @@
             let hasError = false;
 
             // Clear previous error messages
-            document.getElementById("emailError").style.display = "none";
-            document.getElementById("passwordError").style.display = "none";
+            const emailError = document.getElementById("emailError");
+            const passwordError = document.getElementById("passwordError");
+            emailError.textContent = "";
+            passwordError.textContent = "";
+            emailError.style.visibility = "hidden";
+            passwordError.style.visibility = "hidden";
 
             // Validate email
             if (!email) {
-                document.getElementById("emailError").textContent = "Email is required.";
-                document.getElementById("emailError").style.display = "block";
+                emailError.textContent = "Email is required.";
+                emailError.style.visibility = "visible";
                 hasError = true;
             } else if (!/\S+@\S+\.\S+/.test(email)) {
-                document.getElementById("emailError").textContent = "Email is invalid.";
-                document.getElementById("emailError").style.display = "block";
+                emailError.textContent = "Email is invalid.";
+                emailError.style.visibility = "visible";
                 hasError = true;
             }
 
             // Validate password
             if (!password) {
-                document.getElementById("passwordError").textContent = "Password is required.";
-                document.getElementById("passwordError").style.display = "block";
+                passwordError.textContent = "Password is required.";
+                passwordError.style.visibility = "visible";
+                hasError = true;
+            } else if (password.length < 6) {
+                passwordError.textContent = "Password must be at least 6 characters.";
+                passwordError.style.visibility = "visible";
                 hasError = true;
             }
 
             return !hasError;
         }
     </script>
-
-   
 </body>
-
 </html>
