@@ -82,14 +82,21 @@ router.get('/itineraries', async (req, res) => {
 
 // AI-based itinerary generator function
 async function generateItinerary(destination, duration, budget, companions) {
-    const prompt = `Generate a detailed travel itinerary for a ${duration}-day trip to ${destination} with a ${budget} budget, traveling with ${companions}. Include daily activities, accommodation suggestions, and dining options.From morning to evening in bullet points place by place`;
+    const prompt = `Generate a detailed travel itinerary for a ${duration}-day trip to ${destination} with a ${budget} budget, traveling with ${companions}. For each day, provide a structured plan from morning to evening in the following format:
+    - **Day X:**
+      - **Morning (8 AM - 12 PM):** Suggest a specific activity (e.g., sightseeing, trekking, or a cultural experience) tailored to ${destination}'s unique attractions, with a brief description, estimated cost in Indian Rupees (INR), and recommended location. Ensure the activity suits the ${companions} (e.g., solo traveler, family, or group).
+      - **Lunch (12 PM - 2 PM):** Recommend a dining option (e.g., a local restaurant, street food, or picnic spot) featuring ${destination}'s traditional cuisine, with a description, cuisine type, and approximate cost in Indian Rupees (INR) within the budget.
+      - **Afternoon (2 PM - 6 PM):** Suggest another activity (e.g., outdoor exploration, shopping for local crafts, or a scenic boat ride) with a description, estimated cost in Indian Rupees (INR), and specific location in ${destination}.
+      - **Evening (6 PM - 9 PM):** Recommend an evening activity (e.g., a cultural event, sunset view, or dinner) with a description, a dining option featuring local flavors, and approximate cost in Indian Rupees (INR).
+      - **Accommodation:** Suggest a specific type of lodging (e.g., hotel, houseboat, or guesthouse) that fits the ${budget} budget, with a brief description and estimated nightly cost in Indian Rupees (INR).
+    Ensure the activities are culturally relevant to ${destination}, feasible within the time frames, and suitable for the season (assume spring, around March). Keep the total daily cost in Indian Rupees (INR) within the ${budget} budget spread across ${duration} days. Use bullet points for clarity and avoid vague suggestions.`;
 
     let retries = 3;
     while (retries > 0) {
         try {
             const response = await axios.post(
                 "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1",
-                { inputs: prompt, parameters: { max_length: 1000, temperature: 0.7 } },
+                { inputs: prompt, parameters: { max_length: 2000, temperature: 0.7 } },
                 { headers: { Authorization: `Bearer ${process.env.HUGGING_FACE_API_KEY}`, "Content-Type": "application/json" } }
             );
 

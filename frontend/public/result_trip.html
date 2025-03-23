@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,99 +7,165 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         .itinerary-container {
-            max-width: 900px;
-            margin-top: 2%;
+            max-width: 1000px;
+            margin: 2% auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-info {
+            background: darkorange;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
 
         .day-card {
-            background: #f8f9fa;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            padding: 20px;
+            background: linear-gradient(135deg, white, #f3dbaf);
+            border-radius: 12px;
+            margin-bottom: 25px;
+            padding: 25px;
+            transition: transform 0.2s;
+        }
+
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
         .day-title {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             font-weight: bold;
-            color: #007bff;
+            color: darkorange;
+            margin-bottom: 15px;
         }
 
-        .subtitle {
+        .time-slot {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #343a40;
+            margin-top: 20px;
+            border-bottom: 2px solid darkorange;
+            padding-bottom: 5px;
+        }
+
+        .activity-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .activity-list li {
+            padding: 10px 0;
+            border-bottom: 1px dashed #dee2e6;
+            font-size: 1rem;
+            color: #495057;
+        }
+
+        .activity-list li:last-child {
+            border-bottom: none;
+        }
+
+        .btn-custom {
+            background: darkorange;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .btn-custom:hover {
+            background: #e07b00;
+            color: white;
+        }
+
+        .loading-spinner {
+            text-align: center;
             font-size: 1.2rem;
-            font-weight: bold;
-            margin-top: 15px;
-            color: #333;
-        }
-
-        .btn {
-            background: darkorange;
-            color: white;
-        }
-        .btn:hover{
-            background: darkorange;
-            color: white;
+            color: darkorange;
+            margin: 20px 0;
         }
     </style>
 </head>
-
 <body>
     <div id="header-container"></div>
     <div class="container itinerary-container">
         <h1 class="text-center mb-4">Your Travel Itinerary</h1>
-        <div id="itineraryContent"></div>
-        <a href="/trip_planner.html" class="btn mt-3">Create New Itinerary</a>
+        <div id="itineraryContent" class="loading-spinner">Loading your itinerary...</div>
+        <div class="text-center">
+            <a href="/trip_planner.html" class="btn btn-custom mt-3">Create New Itinerary</a>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
+            const itineraryContent = document.getElementById('itineraryContent');
             const itineraryId = sessionStorage.getItem('itineraryId');
-            if (itineraryId) {
-                try {
-                    const response = await fetch(`http://localhost:4000/api/itinerary/${itineraryId}`);
-                    const itinerary = await response.json();
-                    if (itinerary.error) throw new Error(itinerary.error);
 
-                    let formattedItinerary = `<h3>${itinerary.destination} - ${itinerary.duration} Days</h3>
-                        <p><strong>Budget:</strong> ${itinerary.budget}</p>
-                        <p><strong>Traveling with:</strong> ${itinerary.companions}</p>`;
+            if (!itineraryId) {
+                itineraryContent.innerHTML = `<p class="text-danger text-center">No itinerary found. Please create one first.</p>`;
+                return;
+            }
 
-                    const days = itinerary.details.split("Day ");
-                    days.forEach((day, index) => {
-                        if (day.trim() && index > 0) {
-                            const morning = [], afternoon = [], evening = [];
-
-                            const activities = day.split(/\d+\.\s/).filter(item => item.trim() !== "");
-                            activities.forEach(activity => {
-                                if (/morning/i.test(activity)) morning.push(activity);
-                                else if (/afternoon/i.test(activity)) afternoon.push(activity);
-                                else if (/evening|dinner/i.test(activity)) evening.push(activity);
-                            });
-
-                            formattedItinerary += `<div class="day-card">
-                                <p class="day-title">Day ${index}</p>
-                                ${morning.length ? `<p class="subtitle">Morning</p><ul>${morning.map(a => `<li>${a}</li>`).join("")}</ul>` : ""}
-                                ${afternoon.length ? `<p class="subtitle">Afternoon</p><ul>${afternoon.map(a => `<li>${a}</li>`).join("")}</ul>` : ""}
-                                ${evening.length ? `<p class="subtitle">Evening</p><ul>${evening.map(a => `<li>${a}</li>`).join("")}</ul>` : ""}
-                            </div>`;
-                        }
-                    });
-
-                    document.getElementById('itineraryContent').innerHTML = formattedItinerary;
-                    sessionStorage.removeItem('itineraryId');
-                } catch (error) {
-                    document.getElementById('itineraryContent').innerHTML = `<p class="text-danger">Error loading itinerary: ${error.message}</p>`;
+            try {
+                const response = await fetch(`http://localhost:4000/api/itinerary/${itineraryId}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-            } else {
-                document.getElementById('itineraryContent').innerHTML = `<p class="text-danger">No itinerary found. Please create one first.</p>`;
+
+                const itinerary = await response.json();
+                if (itinerary.error) {
+                    throw new Error(itinerary.error);
+                }
+
+                // Header Info
+                let formattedItinerary = `
+                    <div class="header-info">
+                        <h3>${itinerary.destination} - ${itinerary.duration} Days</h3>
+                        <p><strong>Budget:</strong> ${itinerary.budget} | <strong>Traveling with:</strong> ${itinerary.companions}</p>
+                    </div>`;
+
+                // Parse the itinerary details
+                if (!itinerary.details || typeof itinerary.details !== 'string') {
+                    throw new Error("Invalid itinerary details received.");
+                }
+
+                const days = itinerary.details.split("**Day ");
+                days.forEach((day, index) => {
+                    if (day.trim() && index > 1) {
+                        const sections = day.match(/\*\*(.*?):\*\*(.*?)(?=\*\*|$)/gs) || [];
+                        let dayContent = `<div class="day-card"><p class="day-title">Day ${index-1}</p>`;
+
+                        sections.forEach(section => {
+                            const [_, title, content] = section.match(/\*\*(.*?):\*\*(.*)/s);
+                            const items = content.trim().split('\n- ').filter(item => item.trim());
+                            dayContent += `
+                                <p class="time-slot">${title}</p>
+                                <ul class="activity-list">
+                                    ${items.map(item => `<li>${item.replace(/^-\s/, '')}</li>`).join('')}
+                                </ul>`;
+                        });
+
+                        dayContent += `</div>`;
+                        formattedItinerary += dayContent;
+                    }
+                });
+
+                itineraryContent.innerHTML = formattedItinerary;
+                sessionStorage.removeItem('itineraryId');
+
+            } catch (error) {
+                console.error("Error loading itinerary:", error);
+                itineraryContent.innerHTML = `<p class="text-danger text-center">Error loading itinerary: ${error.message}</p>`;
             }
         });
     </script>
     <div id="footer"></div>
     <script src="header.js"></script>
-
     <script src="footer.js"></script>
-
 </body>
-
 </html>
