@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 
 app.use(express.json());
 app.use(cors({
-    origin: "http://localhost:3000", // Update this if frontend runs on a different port
+    origin: "http://localhost:4000", // Update this if frontend runs on a different port
     credentials: true
 }));
 
