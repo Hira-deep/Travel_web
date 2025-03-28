@@ -11,6 +11,7 @@
     <title>Destination</title>
 </head>
 
+
 <body>
     <div id="header-container"></div>
 
@@ -89,10 +90,16 @@
         function navigateToBooking() {
             const placeName = document.getElementById("placeName").textContent;
             const placeImage = document.getElementById("placeImage").src;
+            const placeAddress = document.getElementById("placeAddress").textContent;
+            const placeCountry = document.getElementById("placeCountry").textContent;
+            const placeRating = document.getElementById("placeRating").textContent;
 
             const queryParams = new URLSearchParams({
                 placeName: placeName,
                 placeImage: placeImage,
+                placeAddress: placeAddress,
+                placeCountry: placeCountry,
+                placeRating: placeRating,
                 price: "8000"
             }).toString();
 

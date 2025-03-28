@@ -207,8 +207,10 @@ router.get("/place-details", async (req, res) => {
             address: details.address_line2 || "N/A",
             country: details.country || "N/A",
             rating: details.rank?.confidence || "No Rating",
-            image_url: imageUrl || "../assets/default.jpg" // Match frontend default
-        });
+            image_url: imageUrl || "../assets/default.jpg"
+        }); 
+        
+
     } catch (error) {
         console.error("Error fetching place details:", error.message);
         res.status(500).json({ error: "Failed to fetch place details" });

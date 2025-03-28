@@ -5,18 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Navbar</title>
     <style>
-        .navbar {
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+       .navbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
             background-color: white;
             padding: 15px 20px;
             height: 80px;
-            position:relative;
+            position: fixed; /* Changed from relative to fixed */
             top: 0;
             left: 0;
             width: 100%;
             z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Added subtle shadow for visual separation */
         }
 
         .logo {
@@ -68,6 +73,11 @@
         .btn1:hover{
             text-decoration: none;
             color: white;
+        }
+         /* Add padding to the body to prevent content from being hidden behind the fixed navbar */
+         body {
+            margin: 0;
+            padding-top: 80px; /* Equal to the height of the navbar */
         }
        
     </style>
